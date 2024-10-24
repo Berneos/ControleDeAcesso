@@ -3,9 +3,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package views;
+import controllers.UserController;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import models.Usuario;
+import views.Login;
 /**
  *
  * @author ADMIN
@@ -57,6 +67,15 @@ public class Home extends javax.swing.JFrame {
         lblUsuarioLogado = new javax.swing.JLabel();
         sair = new javax.swing.JButton();
         painelCadastroUsers = new javax.swing.JPanel();
+        NomeLabel = new javax.swing.JLabel();
+        SenhaLabel = new javax.swing.JLabel();
+        UsuarioLabel = new javax.swing.JLabel();
+        NomeTxt = new javax.swing.JTextField();
+        SenhaTxt = new javax.swing.JTextField();
+        UsuarioTxt = new javax.swing.JTextField();
+        ÉAdm = new javax.swing.JCheckBox();
+        InputButton = new javax.swing.JButton();
+        DropButton = new javax.swing.JButton();
         painelHome = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         btnHome1 = new javax.swing.JButton();
@@ -223,6 +242,66 @@ public class Home extends javax.swing.JFrame {
         painelCadastroUsers.setBackground(new java.awt.Color(255, 255, 255));
         painelCadastroUsers.setForeground(new java.awt.Color(0, 0, 0));
         painelCadastroUsers.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        NomeLabel.setBackground(new java.awt.Color(0, 0, 0));
+        NomeLabel.setForeground(new java.awt.Color(0, 0, 0));
+        NomeLabel.setText("Nome:");
+        painelCadastroUsers.add(NomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
+
+        SenhaLabel.setForeground(new java.awt.Color(0, 0, 0));
+        SenhaLabel.setText("Senha:");
+        painelCadastroUsers.add(SenhaLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, -1, -1));
+
+        UsuarioLabel.setForeground(new java.awt.Color(0, 0, 0));
+        UsuarioLabel.setText("Usuario:");
+        painelCadastroUsers.add(UsuarioLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, -1));
+
+        NomeTxt.setBackground(new java.awt.Color(255, 51, 51));
+        NomeTxt.setForeground(new java.awt.Color(255, 255, 255));
+        NomeTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NomeTxtActionPerformed(evt);
+            }
+        });
+        painelCadastroUsers.add(NomeTxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 240, -1));
+
+        SenhaTxt.setBackground(new java.awt.Color(255, 51, 51));
+        SenhaTxt.setForeground(new java.awt.Color(255, 255, 255));
+        SenhaTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SenhaTxtActionPerformed(evt);
+            }
+        });
+        painelCadastroUsers.add(SenhaTxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 240, -1));
+
+        UsuarioTxt.setBackground(new java.awt.Color(255, 51, 51));
+        UsuarioTxt.setForeground(new java.awt.Color(255, 255, 255));
+        painelCadastroUsers.add(UsuarioTxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 160, 240, -1));
+
+        ÉAdm.setForeground(new java.awt.Color(0, 0, 0));
+        ÉAdm.setText("É administrador?");
+        ÉAdm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ÉAdmActionPerformed(evt);
+            }
+        });
+        painelCadastroUsers.add(ÉAdm, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 210, 140, 20));
+
+        InputButton.setBackground(new java.awt.Color(255, 51, 51));
+        InputButton.setForeground(new java.awt.Color(255, 255, 255));
+        InputButton.setText("Cadastrar");
+        InputButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InputButtonActionPerformed(evt);
+            }
+        });
+        painelCadastroUsers.add(InputButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 270, 90, 40));
+
+        DropButton.setBackground(new java.awt.Color(255, 51, 51));
+        DropButton.setForeground(new java.awt.Color(255, 255, 255));
+        DropButton.setText("Limpar");
+        painelCadastroUsers.add(DropButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 270, 90, 40));
+
         jPanel3.add(painelCadastroUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 540, 390));
 
         painelHome.setBackground(new java.awt.Color(255, 255, 255));
@@ -294,43 +373,101 @@ public class Home extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_btnHome1ActionPerformed
+ public Home(Usuario model) {
+
+        // Layout básico para adicionar os componentes
+        setLayout(new FlowLayout());
+
+        add(new JLabel("Nome:"));
+        add(NomeTxt);
+
+        add(new JLabel("Senha:"));
+        add(SenhaTxt);
+
+        add(ÉAdm);
+
+        add(InputButton);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 200);
+        setVisible(true);
+
+        // Adiciona o listener do botão InputButton
+        InputButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                InputButtonActionPerformed(evt);
+            }
+        });
+    }
+    private void NomeTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NomeTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_NomeTxtActionPerformed
+
+    private void SenhaTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SenhaTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SenhaTxtActionPerformed
+
+    private void ÉAdmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ÉAdmActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ÉAdmActionPerformed
+
+    private void InputButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InputButtonActionPerformed
+    // Captura os dados dos campos
+        String nome = NomeTxt.getText();
+        String senha = SenhaTxt.getText();
+        String usuario = UsuarioTxt.getText();
+        
+
+         // Chama o método do Model para salvar os dados
+          Usuario usuarioModel = new Usuario();
+
+          usuarioModel.saveUser(nome, senha, usuario);
+        
+         // Exibe uma mensagem de confirmação
+        JOptionPane.showMessageDialog(null, "Usuário salvo com sucesso!");
+        
+    }//GEN-LAST:event_InputButtonActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+   public static void main(String args[]) {
+    // Configuração do Look and Feel
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Home().setVisible(true);
-            }
-        });
+        //</editor-fold>
+
+        //</editor-fold>
+
+    // Criação da View e do Model
+    Home view = new Home();
+    Usuario model = new Usuario();
+    UserController controller = new UserController(view, model);
+
+    // Exibe a View
+    view.setVisible(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton DropButton;
+    private javax.swing.JButton InputButton;
+    private javax.swing.JLabel NomeLabel;
+    private javax.swing.JTextField NomeTxt;
+    private javax.swing.JLabel SenhaLabel;
+    private javax.swing.JTextField SenhaTxt;
+    private javax.swing.JLabel UsuarioLabel;
+    private javax.swing.JTextField UsuarioTxt;
     private javax.swing.JButton btnCadastroAcessos;
     private javax.swing.JButton btnCadastroPessoas;
     private javax.swing.JButton btnCadastroUsers;
@@ -351,5 +488,29 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel painelCadastroUsers;
     private javax.swing.JPanel painelHome;
     private javax.swing.JButton sair;
+    private javax.swing.JCheckBox ÉAdm;
     // End of variables declaration//GEN-END:variables
+
+    public JButton getSaveButton() {
+        return InputButton;
+    }
+
+    public String getName() {
+        return NomeTxt.getText();
+    }
+
+   public String getPassword() {
+        return SenhaTxt.getText();  
+    }
+
+    public boolean isAdmin() {
+        return ÉAdm.isSelected();
+    }
+    public String getUsuario() {
+        return UsuarioTxt.getText();  
+    }
+
+    public void showMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
 }

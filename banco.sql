@@ -30,7 +30,7 @@ public static string CatracaNome { get; set; }
 */
 CREATE TABLE tbcatraca (
 Id INT AUTO_INCREMENT PRIMARY KEY,
-CatracaNome VARCHAR(255)
+CatracaNome VARCHAR(255) NOT NULL
 );
 
 INSERT INTO tbcatraca (CatracaNome) VALUES ('Catraca 1');
@@ -52,9 +52,9 @@ public string PessoaTelefone { get; set; }
 
 CREATE TABLE tbpessoa (
 Id INT AUTO_INCREMENT PRIMARY KEY,
-PessoaName VARCHAR(255),
-PessoaCPF VARCHAR (11),
-PessoaTelefone VARCHAR (11)
+PessoaName VARCHAR(255) NOT NULL,
+PessoaCPF VARCHAR (11) NOT NULL,
+PessoaTelefone VARCHAR (11) NOT NULL
 );
 
 /*
@@ -66,10 +66,15 @@ PessoaTelefone VARCHAR (11)
 
 CREATE TABLE tbusuario (
 Id INT AUTO_INCREMENT PRIMARY KEY,
-Nome VARCHAR (255),
-Usuariio VARCHAR (255),
-Senha VARCHAR (8)
+Nome VARCHAR (255) NOT NULL,
+Usuariio VARCHAR (255) NOT NULL,
+Senha VARCHAR (8) NOT NULL,
+isAdmin BOOLEAN NOT NULL
 );
+
+INSERT INTO tbusuario(Nome,Usuariio,Senha,isAdmin) VALUES ("Breno","breno","123",true);
+
+SELECT * FROM tbusuario;
 
 
 
