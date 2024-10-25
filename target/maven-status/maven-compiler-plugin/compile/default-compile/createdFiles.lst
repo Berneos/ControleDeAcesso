@@ -8,10 +8,12 @@ views\Home$2.class
 views\Home$7.class
 controllers\HibernateUtil.class
 views\Home$4.class
+views\Home$9.class
 com\mycompany\controledeacesso\ControleDeAcesso.class
 models\Usuario.class
 models\Catraca.class
 views\Home$1.class
+views\Home$8.class
 views\Home$3.class
 views\Home$6.class
 models\Pessoa.class

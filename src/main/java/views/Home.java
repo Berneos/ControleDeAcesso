@@ -53,6 +53,8 @@ public class Home extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel3 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        btnHome1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         catracaImg = new javax.swing.JLabel();
@@ -66,6 +68,9 @@ public class Home extends javax.swing.JFrame {
         menuPerfil = new javax.swing.JPanel();
         lblUsuarioLogado = new javax.swing.JLabel();
         sair = new javax.swing.JButton();
+        painelHome = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         painelCadastroUsers = new javax.swing.JPanel();
         NomeLabel = new javax.swing.JLabel();
         SenhaLabel = new javax.swing.JLabel();
@@ -76,15 +81,30 @@ public class Home extends javax.swing.JFrame {
         ÉAdm = new javax.swing.JCheckBox();
         InputButton = new javax.swing.JButton();
         DropButton = new javax.swing.JButton();
-        painelHome = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        btnHome1 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel2.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel2.setForeground(new java.awt.Color(255, 255, 255));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnHome1.setBackground(new java.awt.Color(255, 51, 51));
+        btnHome1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnHome1.setForeground(new java.awt.Color(255, 255, 255));
+        btnHome1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
+        btnHome1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnHome1.setIconTextGap(20);
+        btnHome1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHome1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnHome1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 10, -1, 49));
+
+        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 0, 540, 60));
 
         jPanel4.setBackground(new java.awt.Color(255, 0, 51));
         jPanel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -102,6 +122,11 @@ public class Home extends javax.swing.JFrame {
         btnHome.setText("Home");
         btnHome.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnHome.setIconTextGap(20);
+        btnHome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHomeActionPerformed(evt);
+            }
+        });
 
         btnCadastroUsers.setBackground(new java.awt.Color(255, 51, 51));
         btnCadastroUsers.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -110,6 +135,11 @@ public class Home extends javax.swing.JFrame {
         btnCadastroUsers.setText("Cadastro de Usuários");
         btnCadastroUsers.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnCadastroUsers.setIconTextGap(20);
+        btnCadastroUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastroUsersActionPerformed(evt);
+            }
+        });
 
         btnCadastroAcessos.setBackground(new java.awt.Color(255, 51, 51));
         btnCadastroAcessos.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -162,7 +192,7 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(btnHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnCadastroUsers, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+            .addComponent(btnCadastroUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroAcessos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -193,7 +223,7 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(btnGerenciarAcessos, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGerenciarAcessos1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 450));
@@ -239,8 +269,26 @@ public class Home extends javax.swing.JFrame {
 
         jPanel3.add(menuPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 60, -1, -1));
 
+        painelHome.setBackground(new java.awt.Color(255, 255, 255));
+        painelHome.setForeground(new java.awt.Color(0, 0, 0));
+        painelHome.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/homered.png"))); // NOI18N
+        painelHome.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 540, 320));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 0, 51));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("HOME");
+        painelHome.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 320, 540, 90));
+
+        jPanel3.add(painelHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 0, 540, 450));
+
         painelCadastroUsers.setBackground(new java.awt.Color(255, 255, 255));
         painelCadastroUsers.setForeground(new java.awt.Color(0, 0, 0));
+        painelCadastroUsers.setEnabled(false);
+        painelCadastroUsers.setFocusable(false);
         painelCadastroUsers.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         NomeLabel.setBackground(new java.awt.Color(0, 0, 0));
@@ -303,41 +351,7 @@ public class Home extends javax.swing.JFrame {
         painelCadastroUsers.add(DropButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 270, 90, 40));
 
         jPanel3.add(painelCadastroUsers, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 540, 390));
-
-        painelHome.setBackground(new java.awt.Color(255, 255, 255));
-        painelHome.setForeground(new java.awt.Color(0, 0, 0));
-        painelHome.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jPanel2.setBackground(new java.awt.Color(255, 0, 51));
-        jPanel2.setForeground(new java.awt.Color(255, 255, 255));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        btnHome1.setBackground(new java.awt.Color(255, 51, 51));
-        btnHome1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        btnHome1.setForeground(new java.awt.Color(255, 255, 255));
-        btnHome1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
-        btnHome1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        btnHome1.setIconTextGap(20);
-        btnHome1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHome1ActionPerformed(evt);
-            }
-        });
-        jPanel2.add(btnHome1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 10, -1, 49));
-
-        painelHome.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 540, 60));
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/homered.png"))); // NOI18N
-        painelHome.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 540, 320));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 0, 51));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("HOME");
-        painelHome.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 320, 540, 90));
-
-        jPanel3.add(painelHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 0, 540, 450));
+        jPanel3.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 160, 170));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -365,6 +379,7 @@ public class Home extends javax.swing.JFrame {
         
             menuPerfil.setVisible(true);
             
+            
         }
         else if(menuPerfil.isVisible())
         {
@@ -375,23 +390,7 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHome1ActionPerformed
  public Home(Usuario model) {
 
-        // Layout básico para adicionar os componentes
-        setLayout(new FlowLayout());
-
-        add(new JLabel("Nome:"));
-        add(NomeTxt);
-
-        add(new JLabel("Senha:"));
-        add(SenhaTxt);
-
-        add(ÉAdm);
-
-        add(InputButton);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 200);
-        setVisible(true);
-
+       
         // Adiciona o listener do botão InputButton
         InputButton.addActionListener(new ActionListener() {
             @Override
@@ -428,6 +427,39 @@ public class Home extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Usuário salvo com sucesso!");
         
     }//GEN-LAST:event_InputButtonActionPerformed
+
+    private void btnCadastroUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroUsersActionPerformed
+        if (!painelCadastroUsers.isVisible()) {
+        painelCadastroUsers.setVisible(true);
+        painelCadastroUsers.setEnabled(true);
+
+        painelHome.setVisible(false);
+        painelHome.setEnabled(false);
+        
+        // Re-adicionar o painel à tela
+        getContentPane().add(painelCadastroUsers);
+        }
+
+        painelCadastroUsers.revalidate();
+        painelCadastroUsers.repaint();
+        
+    }//GEN-LAST:event_btnCadastroUsersActionPerformed
+
+    private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
+        painelHome.setVisible(true);
+        painelHome.setEnabled(true);
+
+        painelCadastroUsers.setVisible(false);
+        painelCadastroUsers.setEnabled(false);
+
+        // Desativar também todos os componentes filhos do painel de cadastro
+        for (java.awt.Component c : painelCadastroUsers.getComponents()) {
+            c.setEnabled(false);
+        }
+
+        painelHome.revalidate();
+        painelHome.repaint();
+    }//GEN-LAST:event_btnHomeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -483,6 +515,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblUsuarioLogado;
     private javax.swing.JPanel menuPerfil;
     private javax.swing.JPanel painelCadastroUsers;

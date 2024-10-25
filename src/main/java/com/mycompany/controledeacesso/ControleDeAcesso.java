@@ -4,12 +4,9 @@
  */
 package com.mycompany.controledeacesso;
 
-import controllers.UserController;
 import views.Login;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import models.Usuario;
-import views.Home;
 
 /**
  *
@@ -22,19 +19,12 @@ public class ControleDeAcesso {
         login.setVisible(true);
          try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/controle_acesso?useSSL=false&serverTimezone=UTC", "root", "root");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/controle_acesso?useSSL=false&serverTimezone=UTC", "root", "Bkdeilt17");
             System.out.println("Conexão bem-sucedida!");
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
          
-       Home view = new Home(); // Cria uma instância da View
-        Usuario model = new Usuario(); // Cria uma instância do Model
-
-        UserController controller = new UserController(view, model); // Cria o Controller
-
-        // Exibe a View
-        view.setVisible(true);
     }
 }
