@@ -14,6 +14,7 @@ views\CadastroUser$2.class
 com\mycompany\controledeacesso\ControleDeAcesso.class
 models\Usuario.class
 models\Catraca.class
+views\CadastroUser$4.class
 views\Home$1.class
 views\Home$3.class
 models\Pessoa.class

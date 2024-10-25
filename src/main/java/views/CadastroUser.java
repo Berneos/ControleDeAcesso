@@ -24,6 +24,8 @@ public class CadastroUser extends javax.swing.JFrame {
         
         // Inicializa o controlador
         userController = new UserController(this, model); // Este construtor deve existir em UserController
+        
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -92,6 +94,11 @@ public class CadastroUser extends javax.swing.JFrame {
         DropButton.setForeground(new java.awt.Color(255, 255, 255));
         DropButton.setText("Limpar");
         DropButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        DropButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DropButtonActionPerformed(evt);
+            }
+        });
         jPanel3.add(DropButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 250, 90, 40));
 
         InputButton.setBackground(new java.awt.Color(255, 0, 51));
@@ -186,6 +193,15 @@ public class CadastroUser extends javax.swing.JFrame {
     // Exibe uma mensagem de sucesso
     JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_InputButtonActionPerformed
+
+    private void DropButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DropButtonActionPerformed
+    NomeTxt.setText("");        // Substitua "NomeTxt" pelo nome correto do seu campo de texto para nome
+    SenhaTxt.setText("");       // Substitua "SenhaTxt" pelo nome correto do seu campo de texto para senha
+    UsuarioTxt.setText("");     // Substitua "UsuarioTxt" pelo nome correto do seu campo de texto para usuário
+    
+    // Desmarca o checkbox "É admin"
+    ÉadmBox.setSelected(false);    // Substitua "Éadm" pelo nome correto do seu checkbox
+    }//GEN-LAST:event_DropButtonActionPerformed
 
     /**
      * @param args the command line arguments
