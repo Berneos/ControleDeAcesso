@@ -41,4 +41,4 @@ public class Usuario {
     public void setSenha(String senha) { this.Senha = senha; }
     public boolean isAdmin() { return isAdmin; }
     public void setAdmin(boolean isAdmin) { this.isAdmin = isAdmin; }
-}
+} 
