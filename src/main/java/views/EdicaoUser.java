@@ -15,14 +15,14 @@ import javax.swing.JOptionPane;
  *
  * @author ADMIN
  */
-public class Home extends javax.swing.JFrame {
+public class EdicaoUser extends javax.swing.JFrame {
 
     /**
      * Creates new form Home
      */
     
    
-    public Home() {
+    public EdicaoUser() {
     
         initComponents();
         
@@ -311,7 +311,7 @@ public class Home extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_btnHome1ActionPerformed
- public Home(Usuario model) {
+ public EdicaoUser(Usuario model) {
 }
        
  
@@ -379,12 +379,13 @@ public class Home extends javax.swing.JFrame {
             }
         }
     }catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-        java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        java.util.logging.Logger.getLogger(EdicaoUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
     // Criação da View e do Model
-    Home view = new Home();
+    EdicaoUser view = new EdicaoUser();
     Usuario model = new Usuario();
 
     // Exibe a View

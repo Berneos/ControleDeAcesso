@@ -117,9 +117,9 @@
                   <Component id="btnCadastroUsers" alignment="0" max="32767" attributes="0"/>
                   <Component id="btnCadastroAcessos" alignment="0" max="32767" attributes="0"/>
                   <Component id="btnCadastroPessoas" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btnGerenciarUsers" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btnGerenciarAcessos" alignment="0" max="32767" attributes="0"/>
                   <Component id="btnGerenciarPessoas" alignment="0" max="32767" attributes="0"/>
+                  <Component id="btnGerenciarAcessos" alignment="0" max="32767" attributes="0"/>
+                  <Component id="btnGerenciarAcessos1" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -144,11 +144,11 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnCadastroPessoas" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnGerenciarUsers" min="-2" pref="49" max="-2" attributes="0"/>
+                      <Component id="btnGerenciarPessoas" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnGerenciarAcessos" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnGerenciarPessoas" min="-2" pref="49" max="-2" attributes="0"/>
+                      <Component id="btnGerenciarAcessos1" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -255,7 +255,7 @@
                 <Property name="iconTextGap" type="int" value="20"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btnGerenciarUsers">
+            <Component class="javax.swing.JButton" name="btnGerenciarPessoas">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="33" red="ff" type="rgb"/>
@@ -273,9 +273,6 @@
                 <Property name="horizontalAlignment" type="int" value="10"/>
                 <Property name="iconTextGap" type="int" value="20"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerenciarUsersActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnGerenciarAcessos">
               <Properties>
@@ -296,7 +293,7 @@
                 <Property name="iconTextGap" type="int" value="20"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btnGerenciarPessoas">
+            <Component class="javax.swing.JButton" name="btnGerenciarAcessos1">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="33" red="ff" type="rgb"/>
@@ -390,7 +387,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="painelHome">
+        <Container class="javax.swing.JPanel" name="menuCadastroUser">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -401,7 +398,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="250" y="0" width="540" height="450"/>
+              <AbsoluteConstraints x="250" y="60" width="540" height="390"/>
             </Constraint>
           </Constraints>
 
@@ -409,36 +406,33 @@
             <Property name="useNullLayout" type="boolean" value="false"/>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel2">
-              <Properties>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/images/homered.png"/>
-                </Property>
-              </Properties>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane6">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="60" width="540" height="320"/>
+                  <AbsoluteConstraints x="0" y="0" width="540" height="390"/>
                 </Constraint>
               </Constraints>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="36" style="1"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="33" green="0" red="ff" type="rgb"/>
-                </Property>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="HOME"/>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="320" width="540" height="90"/>
-                </Constraint>
-              </Constraints>
-            </Component>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JTable" name="userTable">
+                  <Properties>
+                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                      <Table columnCount="5" rowCount="4">
+                        <Column editable="true" title="Title 1" type="java.lang.Object"/>
+                        <Column editable="true" title="Title 2" type="java.lang.Object"/>
+                        <Column editable="true" title="Title 3" type="java.lang.Object"/>
+                        <Column editable="true" title="Title 4" type="java.lang.Object"/>
+                        <Column editable="true" title="Title 5" type="java.lang.Object"/>
+                      </Table>
+                    </Property>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
       </SubComponents>
