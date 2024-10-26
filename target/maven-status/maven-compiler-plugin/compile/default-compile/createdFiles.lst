@@ -9,11 +9,13 @@ views\CadastroUser.class
 views\Home$2.class
 controllers\HibernateUtil.class
 views\CadastroUser$3.class
+views\CadastroPessoa.class
 views\Home$4.class
 views\CadastroUser$2.class
 com\mycompany\controledeacesso\ControleDeAcesso.class
 models\Usuario.class
 models\Catraca.class
+views\CadastroPessoa$1.class
 views\CadastroUser$4.class
 views\Home$1.class
 views\Home$3.class

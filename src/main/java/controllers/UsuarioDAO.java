@@ -38,4 +38,17 @@ public class UsuarioDAO {
         }
         return usuario;
     }
+    public boolean isAdmin(String nomeUsuario) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Consulta o usuário no banco
+            Query<Boolean> query = session.createQuery(
+                "SELECT u.isAdmin FROM Usuario u WHERE u.nome = :nomeUsuario", Boolean.class);
+            query.setParameter("nomeUsuario", nomeUsuario);
+            Boolean isAdmin = query.uniqueResult();
+            return isAdmin != null && isAdmin;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

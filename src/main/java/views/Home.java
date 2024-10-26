@@ -3,13 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package views;
-import controllers.UserController;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import models.Usuario;
 import views.CadastroUser;
 import views.Login;
+import controllers.UsuarioDAO;
+import javax.swing.JOptionPane;
 /**
  *
  * @author ADMIN
@@ -67,6 +68,8 @@ public class Home extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setName("Home"); // NOI18N
+        setResizable(false);
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -308,9 +311,27 @@ public class Home extends javax.swing.JFrame {
        
  
     private void btnCadastroUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroUsersActionPerformed
-            CadastroUser TelaCaUser = new CadastroUser();
-            TelaCaUser.setVisible(true);
-            this.dispose();
+            
+            String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                CadastroUser TelaCaUser = new CadastroUser();
+                TelaCaUser.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+            
+            
     }//GEN-LAST:event_btnCadastroUsersActionPerformed
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
