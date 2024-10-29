@@ -12,14 +12,16 @@ import models.Usuario;
 import views.CadastroUser;
 import views.Login;
 import controllers.UsuarioDAO;
-import javax.swing.JOptionPane;
 import javax.swing.*;
 import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.*;
-import controllers.UsuarioDAO;
-import models.Usuario;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.ArrayList;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 /**
  *
  * @author ADMIN
@@ -30,7 +32,10 @@ public class GerenciarUser extends javax.swing.JFrame {
      * Creates new form Home
      */
     
-   
+    
+    private DefaultTableModel model;
+    private ArrayList<JButton> editButtons = new ArrayList<>();
+    
     public GerenciarUser() {
     
         initComponents();
@@ -45,33 +50,133 @@ public class GerenciarUser extends javax.swing.JFrame {
         }
         
         menuPerfil.setVisible(false);
-        // Defina o modelo da tabela
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"ID", "Nome", "Usuário", "Administrador", "Ações"}, 0);
+        setTitle("Gerenciar Usuários");
+        
 
-        try {
-            // Supondo que você tenha uma classe `UsuarioDAO` para buscar dados do banco
-            List<Usuario> usuarios = UsuarioDAO.buscarTodos(); // Implementar o método buscarTodos() na DAO
-            for (Usuario usuario : usuarios) {
-                model.addRow(new Object[]{
-                    usuario.getId(),
-                    usuario.getNome(),
-                    usuario.getUsuariio(),
-                    usuario.isAdmin() ? "Sim" : "Não",
-                    "Editar" // Este será o texto do botão de ação
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        new ButtonColumn(userTable, 4); // Coluna de índice 4 é onde o botão "Editar" aparecerá
+        setLayout(null); // Usaremos layout nulo para posicionar os botões manualmente
+
+        // Configuração da tabela
+        model = new DefaultTableModel(new Object[]{"ID", "Nome", "Usuário", "Adm"}, 0);
+        userTable.setModel(model); // Associa o modelo `model` à `userTable`
+        
+        carregarDados();
 
 
-        userTable.setModel(model);
-        userTable.setDefaultEditor(Object.class, null); // Desabilita a edição em todas as colunas
+
+        // Adiciona os botões "Editar" ao lado da tabela
+        adicionarBotoesEditar();
+
+        setVisible(true);
     }
 
+    private void carregarDados() {
+        // Configura o Hibernate e abre uma sessão
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+
+            // Consulta para obter todos os usuários (ajustado para retornar objetos Usuario)
+            List<Usuario> usuarios = session.createQuery("FROM Usuario", Usuario.class).getResultList();
+
+            // Adiciona cada usuário como uma linha na tabela
+            for (Usuario usuario : usuarios) {
+                int id = usuario.getId();
+                String nome = usuario.getNome();
+                String usuariio = usuario.getUsuariio();
+                String admText = usuario.isAdmin() ? "Sim" : "Não"; // Converte booleano para texto
+
+                // Adiciona a linha à tabela
+                model.addRow(new Object[]{id, nome, usuariio, admText});
+            }
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
     
-                
+    private void adicionarBotoesEditar() {
+        
+        // Limpa os botões anteriores, caso existam
+        for (JButton button : editButtons) {
+            menuCadastroUser.remove(button); // Remove do painel correto
+        }
+        editButtons.clear();
+
+        // Tamanho do painel que contém a tabela e os botões
+        int panelWidth = menuCadastroUser.getWidth();
+        int buttonWidth = (int) (panelWidth * 0.20); // 20% da largura do painel
+        int tableWidth = panelWidth - buttonWidth - 10; // Ajusta a largura da tabela para 80%
+
+        // Configura o tamanho da tabela para ocupar 80% do painel
+        userTable.setSize(tableWidth, userTable.getHeight());
+        JScrollPane scrollPane = (JScrollPane) userTable.getParent().getParent();
+        scrollPane.setBounds(10, 20, tableWidth, scrollPane.getHeight()); // Ajusta a largura do scrollPane e adiciona um padding menor à esquerda
+
+        // Posição inicial dos botões
+        int yPosition = userTable.getY();
+
+        // Adiciona os botões "Editar" ao lado de cada linha da tabela
+        for (int i = 0; i < model.getRowCount(); i++) {
+            int userId = (int) model.getValueAt(i, 0); // ID do usuário
+            JButton editButton = new JButton("Editar");
+
+            // Define a posição e o tamanho do botão
+            int rowHeight = userTable.getRowHeight();
+            int buttonYPosition = yPosition + (i * rowHeight) + userTable.getTableHeader().getHeight();
+            int buttonXPosition = tableWidth + 15; // Margem reduzida entre a tabela e os botões
+
+            editButton.setBounds(buttonXPosition, buttonYPosition, buttonWidth - 5, rowHeight); // Define largura e altura do botão para coincidir com a linha da tabela
+
+            // Adiciona ação ao botão
+            editButton.addActionListener(new EditButtonListener(userId));
+            editButtons.add(editButton); // Guarda o botão na lista para referência futura
+
+            menuCadastroUser.add(editButton); // Adiciona o botão ao painel correto
+        }
+
+        // Atualiza o layout para exibir os botões corretamente
+        menuCadastroUser.revalidate();
+        menuCadastroUser.repaint();
+
+    }
+       
+    private class EditButtonListener implements ActionListener {
+        private int userId;
+
+        public EditButtonListener(int userId) {
+            this.userId = userId;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Salva o ID do usuário em um arquivo .txt
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("userToEdit.txt"))) {
+                writer.write(String.valueOf(userId));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            // Abre a janela de edição do usuário
+            abrirEdicao(userId);
+        }
+    }
+
+    private void abrirEdicao(int userId) {
+        // Aqui você pode abrir um novo JFrame ou JDialog para edição do usuário
+        JOptionPane.showMessageDialog(this, "Abrindo edição para o usuário com ID: " + userId);
+        EdicaoUser edicao = new EdicaoUser();
+        edicao.setVisible(true);
+    }
        
     /**
      * This method is called from within the constructor to initialize the form.
@@ -292,8 +397,12 @@ public class GerenciarUser extends javax.swing.JFrame {
 
         menuCadastroUser.setBackground(new java.awt.Color(255, 255, 255));
         menuCadastroUser.setForeground(new java.awt.Color(0, 0, 0));
-        menuCadastroUser.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jScrollPane6.setBackground(new java.awt.Color(255, 255, 255));
+        jScrollPane6.setForeground(new java.awt.Color(0, 0, 0));
+
+        userTable.setBackground(new java.awt.Color(255, 255, 255));
+        userTable.setForeground(new java.awt.Color(0, 0, 0));
         userTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -307,7 +416,16 @@ public class GerenciarUser extends javax.swing.JFrame {
         ));
         jScrollPane6.setViewportView(userTable);
 
-        menuCadastroUser.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 540, 390));
+        javax.swing.GroupLayout menuCadastroUserLayout = new javax.swing.GroupLayout(menuCadastroUser);
+        menuCadastroUser.setLayout(menuCadastroUserLayout);
+        menuCadastroUserLayout.setHorizontalGroup(
+            menuCadastroUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        menuCadastroUserLayout.setVerticalGroup(
+            menuCadastroUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         jPanel3.add(menuCadastroUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 540, 390));
 
@@ -373,72 +491,12 @@ public class GerenciarUser extends javax.swing.JFrame {
             
     }//GEN-LAST:event_btnCadastroUsersActionPerformed
 
-    public class ButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
-        private JTable table;
-        private JButton renderButton;
-        private JButton editButton;
-        private String text;
-
-        public ButtonColumn(JTable table, int column) {
-            super();
-            this.table = table;
-            this.renderButton = new JButton();
-            this.editButton = new JButton("Editar");
-            this.editButton.setFocusPainted(false);
-            this.editButton.addActionListener(this);
-
-            TableColumnModel columnModel = table.getColumnModel();
-            columnModel.getColumn(column).setCellRenderer(this);
-            columnModel.getColumn(column).setCellEditor(this);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            renderButton.setText((value == null) ? "Editar" : value.toString());
-            return renderButton;
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            text = (value == null) ? "Editar" : value.toString();
-            return editButton;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return text;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int row = table.getSelectedRow();
-            int userId = (int) table.getValueAt(row, 0); // Obtém o ID do usuário da primeira coluna
-
-            // Armazena o ID do usuário em um arquivo de texto
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarioSelecionado.txt"))) {
-                writer.write(String.valueOf(userId));
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-
-            // Lógica para abrir a nova janela de edição
-            abrirEdicao();
-            fireEditingStopped();
-        }
-
-        
-    }
     
-    private void abrirEdicao(){
-    
-        EdicaoUser editarr = new EdicaoUser();
-        editarr.setVisible(true);
-        this.dispose();
-        
-    }
     
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
-       
+       Home home = new Home();
+       home.setVisible(true);
+       this.dispose();
     }//GEN-LAST:event_btnHomeActionPerformed
 
     /**
@@ -459,12 +517,7 @@ public class GerenciarUser extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-    // Criação da View e do Model
-    GerenciarUser view = new GerenciarUser();
-    Usuario model = new Usuario();
-
-    // Exibe a View
-    view.setVisible(true);
+   
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
