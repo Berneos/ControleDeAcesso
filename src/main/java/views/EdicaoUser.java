@@ -3,14 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package views;
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import models.Usuario;
-import views.CadastroUser;
-import views.Login;
-import controllers.UsuarioDAO;
-import javax.swing.JOptionPane;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 /**
  *
  * @author ADMIN
@@ -20,14 +22,19 @@ public class EdicaoUser extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
-    
-   
-    public EdicaoUser() {
+    private SessionFactory sessionFactory;
+    private Usuario usuarioAtual;
+    private GerenciarUser gerenciarUser;
+    public EdicaoUser(GerenciarUser gerenciarUser) {
     
         initComponents();
+        this.gerenciarUser = gerenciarUser;
+        sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+        carregarUsuario();
         
         
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -48,6 +55,10 @@ public class EdicaoUser extends javax.swing.JFrame {
         textFieldUsuario = new javax.swing.JTextField();
         textFieldSenha = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        adminCheckBox = new javax.swing.JCheckBox();
+        cancelarButton = new javax.swing.JButton();
+        salvarButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Home"); // NOI18N
@@ -70,7 +81,7 @@ public class EdicaoUser extends javax.swing.JFrame {
         textFieldId.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         textFieldId.setForeground(new java.awt.Color(0, 0, 0));
         textFieldId.setFocusable(false);
-        painelHome.add(textFieldId, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
+        painelHome.add(textFieldId, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 40, -1));
 
         jLabel5.setBackground(new java.awt.Color(255, 255, 255));
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -81,7 +92,6 @@ public class EdicaoUser extends javax.swing.JFrame {
         textFieldNome.setBackground(new java.awt.Color(255, 255, 255));
         textFieldNome.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         textFieldNome.setForeground(new java.awt.Color(0, 0, 0));
-        textFieldNome.setFocusable(false);
         painelHome.add(textFieldNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 480, -1));
 
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
@@ -93,22 +103,52 @@ public class EdicaoUser extends javax.swing.JFrame {
         textFieldUsuario.setBackground(new java.awt.Color(255, 255, 255));
         textFieldUsuario.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         textFieldUsuario.setForeground(new java.awt.Color(0, 0, 0));
-        textFieldUsuario.setFocusable(false);
         painelHome.add(textFieldUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 480, -1));
 
         textFieldSenha.setBackground(new java.awt.Color(255, 255, 255));
         textFieldSenha.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         textFieldSenha.setForeground(new java.awt.Color(0, 0, 0));
-        textFieldSenha.setFocusable(false);
         painelHome.add(textFieldSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 480, -1));
 
         jLabel7.setBackground(new java.awt.Color(255, 255, 255));
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel7.setText("Senha:");
-        painelHome.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 70, -1));
+        jLabel7.setText("Admin?");
+        painelHome.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 70, -1));
 
-        jPanel3.add(painelHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 350));
+        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel8.setText("Senha:");
+        painelHome.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 70, -1));
+
+        adminCheckBox.setBackground(new java.awt.Color(255, 255, 255));
+        adminCheckBox.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        painelHome.add(adminCheckBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 40, 30));
+
+        cancelarButton.setBackground(new java.awt.Color(255, 51, 51));
+        cancelarButton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        cancelarButton.setForeground(new java.awt.Color(255, 255, 255));
+        cancelarButton.setText("CANCELAR");
+        cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarButtonActionPerformed(evt);
+            }
+        });
+        painelHome.add(cancelarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 360, 130, 60));
+
+        salvarButton.setBackground(new java.awt.Color(255, 51, 51));
+        salvarButton.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        salvarButton.setForeground(new java.awt.Color(255, 255, 255));
+        salvarButton.setText("SALVAR");
+        salvarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salvarButtonActionPerformed(evt);
+            }
+        });
+        painelHome.add(salvarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 130, 60));
+
+        jPanel3.add(painelHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 450));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -123,12 +163,22 @@ public class EdicaoUser extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
- public EdicaoUser(Usuario model) {
+
+    private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_cancelarButtonActionPerformed
+
+    private void salvarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvarButtonActionPerformed
+        salvarAlteracoes();
+    }//GEN-LAST:event_salvarButtonActionPerformed
+    // Adicione o parâmetro no construtor
+    
+    public EdicaoUser(Usuario model) {
 }
        
  
     /**
-     * @param args the command line arguments
+     * @param args the command line arguments\
      */
    public static void main(String args[]) {
     // Configuração do Look and Feel
@@ -146,20 +196,121 @@ public class EdicaoUser extends javax.swing.JFrame {
         //</editor-fold>
 
     // Criação da View e do Model
-    EdicaoUser view = new EdicaoUser();
+    
     Usuario model = new Usuario();
 
-    // Exibe a View
-    view.setVisible(true);
+    // \Exibe a View
+    
+    }
+   
+   private void carregarUsuario() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("userToEdit.txt"))) {
+            String linha = reader.readLine();
+            int userId = Integer.parseInt(linha);
+
+            Session session = sessionFactory.openSession();
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+
+                Query<Usuario> query = session.createQuery("FROM Usuario WHERE id = :id", Usuario.class);
+                query.setParameter("id", userId);
+                usuarioAtual = query.uniqueResult();
+
+                if (usuarioAtual != null) {
+                    // Preenche os campos com as informações do usuário
+                    textFieldId.setText(String.valueOf(usuarioAtual.getId()));
+                    textFieldNome.setText(usuarioAtual.getNome());
+                    textFieldUsuario.setText(usuarioAtual.getUsuariio());
+                    adminCheckBox.setSelected(usuarioAtual.isAdmin());
+                } else {
+                    JOptionPane.showMessageDialog(this, "Usuário não encontrado.");
+                }
+
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction != null) transaction.rollback();
+                e.printStackTrace();
+            } finally {
+                session.close();
+            }
+
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar o ID do usuário.");
+        }
     }
 
+    private void salvarAlteracoes() {
+        if (usuarioAtual == null) {
+            JOptionPane.showMessageDialog(this, "Nenhum usuário carregado.");
+            return;
+        }
+
+        String novoNome = textFieldNome.getText();
+        String novoUsuario = textFieldUsuario.getText();
+        boolean novoAdmin = adminCheckBox.isSelected();
+        String novaSenha = textFieldSenha.getText(); // Obtém a nova senha, caso alterada
+
+        Session session = sessionFactory.openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+
+            // Verifica e atualiza os valores, se necessário
+            if (!usuarioAtual.getNome().equals(novoNome)) {
+                usuarioAtual.setNome(novoNome);
+            }
+            if (!usuarioAtual.getUsuariio().equals(novoUsuario)) {
+                usuarioAtual.setUsuario(novoUsuario);
+            }
+            if (usuarioAtual.isAdmin() != novoAdmin) {
+                usuarioAtual.setAdmin(novoAdmin);
+            }
+            if (!novaSenha.isEmpty()) {
+                usuarioAtual.setSenha(novaSenha); // Atualiza a senha apenas se não estiver vazia
+            }
+
+            session.update(usuarioAtual);
+            transaction.commit();
+
+            JOptionPane.showMessageDialog(this, "Informações atualizadas com sucesso.");
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao salvar alterações.");
+        } finally {
+            if (gerenciarUser != null) {
+            gerenciarUser.atualizarTabela();
+            }
+            session.close();
+            this.dispose();
+        }
+        
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
+    }
+
+    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox adminCheckBox;
+    private javax.swing.JButton cancelarButton;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel painelHome;
+    private javax.swing.JButton salvarButton;
     private javax.swing.JTextField textFieldId;
     private javax.swing.JTextField textFieldNome;
     private javax.swing.JTextField textFieldSenha;

@@ -72,7 +72,8 @@ Senha VARCHAR (8) NOT NULL,
 isAdmin BOOLEAN NOT NULL
 );
 
-INSERT INTO tbusuario(Nome,Usuariio,Senha,isAdmin) VALUES ("Breno","breno","123",true);
+INSERT INTO tbusuario(Nome,Usuariio,Senha,isAdmin) VALUES ("BnGames","Breno","123",true);
+INSERT INTO tbusuario(Nome,Usuariio,Senha,isAdmin) VALUES ("Igor","Moneyballs","123",false);
 
 SELECT * FROM tbusuario;
 

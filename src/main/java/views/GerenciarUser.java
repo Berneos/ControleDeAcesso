@@ -174,9 +174,16 @@ public class GerenciarUser extends javax.swing.JFrame {
     private void abrirEdicao(int userId) {
         // Aqui você pode abrir um novo JFrame ou JDialog para edição do usuário
         JOptionPane.showMessageDialog(this, "Abrindo edição para o usuário com ID: " + userId);
-        EdicaoUser edicao = new EdicaoUser();
+        EdicaoUser edicao = new EdicaoUser(this);
         edicao.setVisible(true);
     }
+    public void atualizarTabela() {
+    // Limpa a tabela atual
+    model.setRowCount(0);
+    
+    // Recarrega os dados dos usuários
+    carregarDados();
+    }   
        
     /**
      * This method is called from within the constructor to initialize the form.
