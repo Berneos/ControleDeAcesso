@@ -103,7 +103,29 @@ public class GerenciarUser extends javax.swing.JFrame {
             sessionFactory.close();
         }
     }
-    
+    public void configurarRenderizadorDeTexto() {
+        // Cria um renderizador personalizado
+        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof String) {
+                    String texto = (String) value;
+                    int maxLength = 15; // Ajuste para o número máximo de caracteres visíveis
+
+                    if (texto.length() > maxLength) {
+                        texto = texto.substring(0, maxLength - 3) + "...";
+                    }
+                    super.setValue(texto);
+                } else {
+                    super.setValue(value);
+                }
+            }
+        };
+
+        // Aplica o renderizador na coluna específica de "Nome"
+        TableColumn colunaNome = userTable.getColumnModel().getColumn(2); // Supondo que a coluna de "Nome" seja a 1
+        colunaNome.setCellRenderer(renderizador);
+    }
     private void adicionarBotoesEditar() {
         
         // Limpa os botões anteriores, caso existam
@@ -149,6 +171,7 @@ public class GerenciarUser extends javax.swing.JFrame {
         menuCadastroUser.repaint();
 
     }
+    
        
     private class EditButtonListener implements ActionListener {
         private int userId;
