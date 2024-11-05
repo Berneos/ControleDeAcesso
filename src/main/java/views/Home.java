@@ -162,6 +162,11 @@ public class Home extends javax.swing.JFrame {
         btnGerenciarAcessos.setText("Gerenciar Acessos");
         btnGerenciarAcessos.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnGerenciarAcessos.setIconTextGap(20);
+        btnGerenciarAcessos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerenciarAcessosActionPerformed(evt);
+            }
+        });
 
         btnGerenciarPessoas.setBackground(new java.awt.Color(255, 51, 51));
         btnGerenciarPessoas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -390,6 +395,27 @@ public class Home extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
             }
     }//GEN-LAST:event_btnGerenciarPessoasActionPerformed
+
+    private void btnGerenciarAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessosActionPerformed
+        String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarAcesso geace = new GerenciarAcesso();
+                geace.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+    }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
 
     /**
      * @param args the command line arguments

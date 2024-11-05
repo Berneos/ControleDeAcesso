@@ -58,7 +58,7 @@ public class GerenciarUser extends javax.swing.JFrame {
         // Configuração da tabela
         model = new DefaultTableModel(new Object[]{"ID", "Nome", "Usuário", "Adm"}, 0);
         userTable.setModel(model); // Associa o modelo `model` à `userTable`
-        
+        configurarRenderizadorNomeComReticenciasETooltip();
         carregarDados();
 
 
@@ -103,28 +103,47 @@ public class GerenciarUser extends javax.swing.JFrame {
             sessionFactory.close();
         }
     }
-    public void configurarRenderizadorDeTexto() {
-        // Cria um renderizador personalizado
+   public void configurarRenderizadorNomeComReticenciasETooltip() {
         DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
             @Override
-            protected void setValue(Object value) {
+            public void setValue(Object value) {
                 if (value instanceof String) {
-                    String texto = (String) value;
-                    int maxLength = 15; // Ajuste para o número máximo de caracteres visíveis
+                    String textoCompleto = (String) value;
 
-                    if (texto.length() > maxLength) {
-                        texto = texto.substring(0, maxLength - 3) + "...";
+                    // Define o limite de caracteres (ajuste conforme o tamanho da coluna)
+                    int limiteCaracteres = 15; 
+                    if (textoCompleto.length() > limiteCaracteres) {
+                        textoCompleto = textoCompleto.substring(0, limiteCaracteres - 3) + "...";
                     }
-                    super.setValue(texto);
+
+                    super.setValue(textoCompleto);
                 } else {
                     super.setValue(value);
                 }
             }
         };
 
-        // Aplica o renderizador na coluna específica de "Nome"
-        TableColumn colunaNome = userTable.getColumnModel().getColumn(2); // Supondo que a coluna de "Nome" seja a 1
+        // Aplica o renderizador na coluna "Nome"
+        TableColumn colunaNome = userTable.getColumnModel().getColumn(1); // Coluna de índice 1 para "Nome"
         colunaNome.setCellRenderer(renderizador);
+
+        // Adiciona o MouseMotionListener para exibir o tooltip
+        userTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                int row = userTable.rowAtPoint(e.getPoint());
+                int col = userTable.columnAtPoint(e.getPoint());
+
+                if (col == 1) { // Coluna "Nome"
+                    Object value = userTable.getValueAt(row, col);
+                    if (value != null) {
+                        userTable.setToolTipText(value.toString()); // Mostra o nome completo como tooltip
+                    }
+                } else {
+                    userTable.setToolTipText(null); // Remove o tooltip quando fora da coluna "Nome"
+                }
+            }
+        });
     }
     private void adicionarBotoesEditar() {
         
@@ -227,9 +246,9 @@ public class GerenciarUser extends javax.swing.JFrame {
         btnCadastroUsers = new javax.swing.JButton();
         btnCadastroAcessos = new javax.swing.JButton();
         btnCadastroPessoas = new javax.swing.JButton();
-        btnGerenciarPessoas = new javax.swing.JButton();
+        btnGerenciarUsuarios = new javax.swing.JButton();
         btnGerenciarAcessos = new javax.swing.JButton();
-        btnGerenciarAcessos1 = new javax.swing.JButton();
+        btnGerenciarPessoas = new javax.swing.JButton();
         menuPerfil = new javax.swing.JPanel();
         lblUsuarioLogado = new javax.swing.JLabel();
         sair = new javax.swing.JButton();
@@ -313,13 +332,18 @@ public class GerenciarUser extends javax.swing.JFrame {
         btnCadastroPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnCadastroPessoas.setIconTextGap(20);
 
-        btnGerenciarPessoas.setBackground(new java.awt.Color(255, 51, 51));
-        btnGerenciarPessoas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnGerenciarPessoas.setForeground(new java.awt.Color(255, 255, 255));
-        btnGerenciarPessoas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
-        btnGerenciarPessoas.setText("Gerenciar Usuários");
-        btnGerenciarPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        btnGerenciarPessoas.setIconTextGap(20);
+        btnGerenciarUsuarios.setBackground(new java.awt.Color(255, 51, 51));
+        btnGerenciarUsuarios.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnGerenciarUsuarios.setForeground(new java.awt.Color(255, 255, 255));
+        btnGerenciarUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
+        btnGerenciarUsuarios.setText("Gerenciar Usuários");
+        btnGerenciarUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnGerenciarUsuarios.setIconTextGap(20);
+        btnGerenciarUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerenciarUsuariosActionPerformed(evt);
+            }
+        });
 
         btnGerenciarAcessos.setBackground(new java.awt.Color(255, 51, 51));
         btnGerenciarAcessos.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -328,14 +352,24 @@ public class GerenciarUser extends javax.swing.JFrame {
         btnGerenciarAcessos.setText("Gerenciar Acessos");
         btnGerenciarAcessos.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnGerenciarAcessos.setIconTextGap(20);
+        btnGerenciarAcessos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerenciarAcessosActionPerformed(evt);
+            }
+        });
 
-        btnGerenciarAcessos1.setBackground(new java.awt.Color(255, 51, 51));
-        btnGerenciarAcessos1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnGerenciarAcessos1.setForeground(new java.awt.Color(255, 255, 255));
-        btnGerenciarAcessos1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pessoa.png"))); // NOI18N
-        btnGerenciarAcessos1.setText("Gerenciar Pessoas");
-        btnGerenciarAcessos1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        btnGerenciarAcessos1.setIconTextGap(20);
+        btnGerenciarPessoas.setBackground(new java.awt.Color(255, 51, 51));
+        btnGerenciarPessoas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnGerenciarPessoas.setForeground(new java.awt.Color(255, 255, 255));
+        btnGerenciarPessoas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pessoa.png"))); // NOI18N
+        btnGerenciarPessoas.setText("Gerenciar Pessoas");
+        btnGerenciarPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnGerenciarPessoas.setIconTextGap(20);
+        btnGerenciarPessoas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerenciarPessoasActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -351,9 +385,9 @@ public class GerenciarUser extends javax.swing.JFrame {
             .addComponent(btnCadastroUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroAcessos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGerenciarUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGerenciarAcessos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGerenciarAcessos1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -374,11 +408,11 @@ public class GerenciarUser extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCadastroPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnGerenciarUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGerenciarAcessos, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnGerenciarAcessos1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -529,6 +563,52 @@ public class GerenciarUser extends javax.swing.JFrame {
        this.dispose();
     }//GEN-LAST:event_btnHomeActionPerformed
 
+    private void btnGerenciarPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarPessoasActionPerformed
+        String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarPessoa Telape = new GerenciarPessoa();
+                Telape.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+    }//GEN-LAST:event_btnGerenciarPessoasActionPerformed
+
+    private void btnGerenciarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarUsuariosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGerenciarUsuariosActionPerformed
+
+    private void btnGerenciarAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessosActionPerformed
+        String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarAcesso geace = new GerenciarAcesso();
+                geace.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+    }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -555,8 +635,8 @@ public class GerenciarUser extends javax.swing.JFrame {
     private javax.swing.JButton btnCadastroPessoas;
     private javax.swing.JButton btnCadastroUsers;
     private javax.swing.JButton btnGerenciarAcessos;
-    private javax.swing.JButton btnGerenciarAcessos1;
     private javax.swing.JButton btnGerenciarPessoas;
+    private javax.swing.JButton btnGerenciarUsuarios;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnHome1;
     private javax.swing.JLabel catracaImg;

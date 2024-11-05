@@ -8,9 +8,9 @@ import java.io.FileReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import models.Pessoa;
-import views.CadastroUser;
+import models.Acesso;
 import views.Login;
+import java.time.format.DateTimeFormatter;
 import controllers.UsuarioDAO;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -26,7 +26,7 @@ import org.hibernate.cfg.Configuration;
  *
  * @author ADMIN
  */
-public class GerenciarPessoa extends javax.swing.JFrame {
+public class GerenciarAcesso extends javax.swing.JFrame {
 
     /**
      * Creates new form Home
@@ -36,47 +36,8 @@ public class GerenciarPessoa extends javax.swing.JFrame {
     private DefaultTableModel model;
     private ArrayList<JButton> editButtons = new ArrayList<>();
     
-    private void configurarRenderizadores() {
-        // Renderizador para a coluna de CPF
-        DefaultTableCellRenderer cpfRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public void setValue(Object value) {
-                if (value instanceof String) {
-                    String cpf = (String) value;
-                    if (cpf.length() == 11) { // Verifica se o CPF possui 11 dígitos
-                        cpf = cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." + cpf.substring(6, 9) + "-" + cpf.substring(9);
-                    }
-                    super.setValue(cpf);
-                } else {
-                    super.setValue(value);
-                }
-            }
-        };
-
-        // Renderizador para a coluna de Telefone
-        DefaultTableCellRenderer telefoneRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public void setValue(Object value) {
-                if (value instanceof String) {
-                    String telefone = (String) value;
-                    if (telefone.length() == 11) { // Verifica se o telefone possui 11 dígitos
-                        telefone = "(" + telefone.substring(0, 2) + ") " + telefone.substring(2, 7) + "-" + telefone.substring(7);
-                    }
-                    super.setValue(telefone);
-                } else {
-                    super.setValue(value);
-                }
-            }
-        };
-
-        // Aplica os renderizadores nas colunas corretas (CPF e Telefone)
-        TableColumn colunaCpf = userTable.getColumnModel().getColumn(2); // Supondo que CPF seja a terceira coluna (index 2)
-        TableColumn colunaTelefone = userTable.getColumnModel().getColumn(3); // Supondo que Telefone seja a quarta coluna (index 3)
-        
-        colunaCpf.setCellRenderer(cpfRenderer);
-        colunaTelefone.setCellRenderer(telefoneRenderer);
-    }
-    public GerenciarPessoa() {
+   
+    public GerenciarAcesso() {
     
         initComponents();
         
@@ -90,15 +51,16 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         }
         
         menuPerfil.setVisible(false);
-        setTitle("Gerenciar Usuários");
+        setTitle("Gerenciar Acessos");
         
 
         setLayout(null); // Usaremos layout nulo para posicionar os botões manualmente
 
         // Configuração da tabela
-        model = new DefaultTableModel(new Object[]{"ID", "Nome", "CPF", "Telefone"}, 0);
-        userTable.setModel(model); // Associa o modelo `model` à `userTable`
+        model = new DefaultTableModel(new Object[]{"ID", "Catraca","Pessoa", "Usuário", "Data"}, 0);
+        acessTable.setModel(model); // Associa o modelo `model` à `userTable`
         configurarRenderizadores();
+        configurarRenderizadorNomeComReticenciasETooltip();
         carregarDados();
 
 
@@ -107,7 +69,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         adicionarBotoesEditar();
 
         setVisible(true);
-        configurarRenderizadorNomeComReticenciasETooltip();
+       
     }
 
     private void carregarDados() {
@@ -120,18 +82,19 @@ public class GerenciarPessoa extends javax.swing.JFrame {
             transaction = session.beginTransaction();
 
             // Consulta para obter todos os usuários (ajustado para retornar objetos Usuario)
-            List<Pessoa> pessoas = session.createQuery("FROM Pessoa", Pessoa.class).getResultList();
+            List<Acesso> acessos = session.createQuery("FROM Acesso", Acesso.class).getResultList();
 
             // Adiciona cada usuário como uma linha na tabela
-            for (Pessoa pessoa : pessoas) {
-                int id = pessoa.getId();
-                String nome = pessoa.getNome();
-                System.out.println(nome);
-                String cpf = pessoa.getCpf();
-                String telefone = pessoa.getTelefone(); // Converte booleano para texto
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            for (Acesso acesso : acessos) {
+                int id = acesso.id;
+                String catraca = acesso.catraca != null ? acesso.catraca.getNome() : "N/A";
+                String pessoa = acesso.pessoa != null ? acesso.pessoa.getNome() : "N/A";
+                String usuario = acesso.usuario != null ? acesso.usuario.getNome() : "N/A";
+                String dataAcesso = acesso.dataAcesso != null ? acesso.dataAcesso.format(formatter) : "N/A";
 
                 // Adiciona a linha à tabela
-                model.addRow(new Object[]{id, nome, cpf, telefone});
+                model.addRow(new Object[]{id, catraca, pessoa, usuario, dataAcesso});
             }
 
             transaction.commit();
@@ -145,6 +108,54 @@ public class GerenciarPessoa extends javax.swing.JFrame {
             sessionFactory.close();
         }
     }
+    
+    public void configurarRenderizadorNomeComReticenciasETooltip() {
+        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof String) {
+                    String textoCompleto = (String) value;
+
+                    // Define o limite de caracteres (ajuste conforme o tamanho da coluna)
+                    int limiteCaracteres = 15; 
+                    if (textoCompleto.length() > limiteCaracteres) {
+                        textoCompleto = textoCompleto.substring(0, limiteCaracteres - 3) + "...";
+                    }
+
+                    super.setValue(textoCompleto);
+                } else {
+                    super.setValue(value);
+                }
+            }
+        };
+
+        // Aplica o renderizador na coluna "Nome"
+        TableColumn colunaNome = acessTable.getColumnModel().getColumn(2); // Coluna de índice 2 para "Nome"
+        colunaNome.setCellRenderer(renderizador);
+
+        // Aplica o renderizador na quarta coluna (índice 3)
+        TableColumn colunaQuarta = acessTable.getColumnModel().getColumn(4); // Coluna de índice 4
+        colunaQuarta.setCellRenderer(renderizador);
+
+        // Adiciona o MouseMotionListener para exibir o tooltip
+        acessTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                int row = acessTable.rowAtPoint(e.getPoint());
+                int col = acessTable.columnAtPoint(e.getPoint());
+
+                if (col == 2 || col == 4) { // Coluna "Nome" ou coluna 4
+                    Object value = acessTable.getValueAt(row, col);
+                    if (value != null) {
+                        acessTable.setToolTipText(value.toString()); // Mostra o valor completo como tooltip
+                    }
+                } else {
+                    acessTable.setToolTipText(null); // Remove o tooltip quando fora das colunas relevantes
+                }
+            }
+        });
+    }
+
     
     private void adicionarBotoesEditar() {
         
@@ -160,12 +171,12 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         int tableWidth = panelWidth - buttonWidth - 10; // Ajusta a largura da tabela para 80%
 
         // Configura o tamanho da tabela para ocupar 80% do painel
-        userTable.setSize(tableWidth, userTable.getHeight());
-        JScrollPane scrollPane = (JScrollPane) userTable.getParent().getParent();
+        acessTable.setSize(tableWidth, acessTable.getHeight());
+        JScrollPane scrollPane = (JScrollPane) acessTable.getParent().getParent();
         scrollPane.setBounds(10, 20, tableWidth, scrollPane.getHeight()); // Ajusta a largura do scrollPane e adiciona um padding menor à esquerda
 
         // Posição inicial dos botões
-        int yPosition = userTable.getY();
+        int yPosition = acessTable.getY();
 
         // Adiciona os botões "Editar" ao lado de cada linha da tabela
         for (int i = 0; i < model.getRowCount(); i++) {
@@ -173,8 +184,8 @@ public class GerenciarPessoa extends javax.swing.JFrame {
             JButton editButton = new JButton("Editar");
 
             // Define a posição e o tamanho do botão
-            int rowHeight = userTable.getRowHeight();
-            int buttonYPosition = yPosition + (i * rowHeight) + userTable.getTableHeader().getHeight();
+            int rowHeight = acessTable.getRowHeight();
+            int buttonYPosition = yPosition + (i * rowHeight) + acessTable.getTableHeader().getHeight();
             int buttonXPosition = tableWidth + 15; // Margem reduzida entre a tabela e os botões
 
             editButton.setBounds(buttonXPosition, buttonYPosition, buttonWidth - 5, rowHeight); // Define largura e altura do botão para coincidir com a linha da tabela
@@ -193,30 +204,30 @@ public class GerenciarPessoa extends javax.swing.JFrame {
     }
        
     private class EditButtonListener implements ActionListener {
-        private int pessoaId;
+        private int acessId;
 
-        public EditButtonListener(int pessoaId) {
-            this.pessoaId = pessoaId;
+        public EditButtonListener(int acessId) {
+            this.acessId = acessId;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             // Salva o ID do usuário em um arquivo .txt
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("pessoaToEdit.txt"))) {
-                writer.write(String.valueOf(pessoaId));
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("acessoBToEdit.txt"))) {
+                writer.write(String.valueOf(acessId));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
             // Abre a janela de edição do usuário
-            abrirEdicao(pessoaId);
+            abrirEdicao(acessId);
         }
     }
 
-    private void abrirEdicao(int pessoaId) {
+    private void abrirEdicao(int acessId) {
         // Aqui você pode abrir um novo JFrame ou JDialog para edição do usuário
-        JOptionPane.showMessageDialog(this, "Abrindo edição para a pessoa com ID: " + pessoaId);
-        EdicaoPessoa edicao = new EdicaoPessoa(this);
+        JOptionPane.showMessageDialog(this, "Abrindo edição para o acesso com ID: " + acessId);
+        EdicaoAcesso edicao = new EdicaoAcesso(this);
         edicao.setVisible(true);
     }
     public void atualizarTabela() {
@@ -254,7 +265,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         sair = new javax.swing.JButton();
         menuCadastroUser = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
-        userTable = new javax.swing.JTable();
+        acessTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Home"); // NOI18N
@@ -352,11 +363,6 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         btnGerenciarAcessos.setText("Gerenciar Acessos");
         btnGerenciarAcessos.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnGerenciarAcessos.setIconTextGap(20);
-        btnGerenciarAcessos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGerenciarAcessosActionPerformed(evt);
-            }
-        });
 
         btnGerenciarAcessos1.setBackground(new java.awt.Color(255, 51, 51));
         btnGerenciarAcessos1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -460,9 +466,9 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         jScrollPane6.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane6.setForeground(new java.awt.Color(0, 0, 0));
 
-        userTable.setBackground(new java.awt.Color(255, 255, 255));
-        userTable.setForeground(new java.awt.Color(0, 0, 0));
-        userTable.setModel(new javax.swing.table.DefaultTableModel(
+        acessTable.setBackground(new java.awt.Color(255, 255, 255));
+        acessTable.setForeground(new java.awt.Color(0, 0, 0));
+        acessTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -473,7 +479,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
-        jScrollPane6.setViewportView(userTable);
+        jScrollPane6.setViewportView(acessTable);
 
         javax.swing.GroupLayout menuCadastroUserLayout = new javax.swing.GroupLayout(menuCadastroUser);
         menuCadastroUser.setLayout(menuCadastroUserLayout);
@@ -524,47 +530,20 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnHome1ActionPerformed
 
-    public void configurarRenderizadorNomeComReticenciasETooltip() {
-        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+    private void configurarRenderizadores() {
+        DefaultTableCellRenderer dataRenderer = new DefaultTableCellRenderer() {
             @Override
             public void setValue(Object value) {
                 if (value instanceof String) {
-                    String textoCompleto = (String) value;
-
-                    // Define o limite de caracteres (ajuste conforme o tamanho da coluna)
-                    int limiteCaracteres = 15; 
-                    if (textoCompleto.length() > limiteCaracteres) {
-                        textoCompleto = textoCompleto.substring(0, limiteCaracteres - 3) + "...";
-                    }
-
-                    super.setValue(textoCompleto);
-                } else {
                     super.setValue(value);
+                } else {
+                    super.setValue("N/A");
                 }
             }
         };
 
-        // Aplica o renderizador na coluna "Nome"
-        TableColumn colunaNome = userTable.getColumnModel().getColumn(1); // Coluna de índice 1 para "Nome"
-        colunaNome.setCellRenderer(renderizador);
-
-        // Adiciona o MouseMotionListener para exibir o tooltip
-        userTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(java.awt.event.MouseEvent e) {
-                int row = userTable.rowAtPoint(e.getPoint());
-                int col = userTable.columnAtPoint(e.getPoint());
-
-                if (col == 1) { // Coluna "Nome"
-                    Object value = userTable.getValueAt(row, col);
-                    if (value != null) {
-                        userTable.setToolTipText(value.toString()); // Mostra o nome completo como tooltip
-                    }
-                } else {
-                    userTable.setToolTipText(null); // Remove o tooltip quando fora da coluna "Nome"
-                }
-            }
-        });
+        TableColumn colunaData = acessTable.getColumnModel().getColumn(4);
+        colunaData.setCellRenderer(dataRenderer);
     }
  
     private void btnCadastroUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroUsersActionPerformed
@@ -600,7 +579,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHomeActionPerformed
 
     private void btnGerenciarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarUsuariosActionPerformed
-            String nomeUsuario = "";
+        String nomeUsuario = "";
             try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
                 nomeUsuario = reader.readLine();
             } catch (IOException e) {
@@ -620,27 +599,6 @@ public class GerenciarPessoa extends javax.swing.JFrame {
             }
     }//GEN-LAST:event_btnGerenciarUsuariosActionPerformed
 
-    private void btnGerenciarAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessosActionPerformed
-        String nomeUsuario = "";
-            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
-                nomeUsuario = reader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            UsuarioDAO usuarioDAO = new UsuarioDAO();
-            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
-
-            if (isAdmin) {
-                GerenciarAcesso geace = new GerenciarAcesso();
-                geace.setVisible(true);
-                this.dispose();
-            } else {
-                // Exibe alerta de área restrita
-                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
-            }
-    }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -654,8 +612,12 @@ public class GerenciarPessoa extends javax.swing.JFrame {
             }
         }
     }catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-        java.util.logging.Logger.getLogger(GerenciarPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        java.util.logging.Logger.getLogger(GerenciarAcesso.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -665,6 +627,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable acessTable;
     private javax.swing.JButton btnCadastroAcessos;
     private javax.swing.JButton btnCadastroPessoas;
     private javax.swing.JButton btnCadastroUsers;
@@ -683,6 +646,5 @@ public class GerenciarPessoa extends javax.swing.JFrame {
     private javax.swing.JPanel menuCadastroUser;
     private javax.swing.JPanel menuPerfil;
     private javax.swing.JButton sair;
-    private javax.swing.JTable userTable;
     // End of variables declaration//GEN-END:variables
 }
