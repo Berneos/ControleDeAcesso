@@ -36,6 +36,46 @@ public class GerenciarPessoa extends javax.swing.JFrame {
     private DefaultTableModel model;
     private ArrayList<JButton> editButtons = new ArrayList<>();
     
+    private void configurarRenderizadores() {
+        // Renderizador para a coluna de CPF
+        DefaultTableCellRenderer cpfRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof String) {
+                    String cpf = (String) value;
+                    if (cpf.length() == 11) { // Verifica se o CPF possui 11 dígitos
+                        cpf = cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." + cpf.substring(6, 9) + "-" + cpf.substring(9);
+                    }
+                    super.setValue(cpf);
+                } else {
+                    super.setValue(value);
+                }
+            }
+        };
+
+        // Renderizador para a coluna de Telefone
+        DefaultTableCellRenderer telefoneRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof String) {
+                    String telefone = (String) value;
+                    if (telefone.length() == 11) { // Verifica se o telefone possui 11 dígitos
+                        telefone = "(" + telefone.substring(0, 2) + ") " + telefone.substring(2, 7) + "-" + telefone.substring(7);
+                    }
+                    super.setValue(telefone);
+                } else {
+                    super.setValue(value);
+                }
+            }
+        };
+
+        // Aplica os renderizadores nas colunas corretas (CPF e Telefone)
+        TableColumn colunaCpf = userTable.getColumnModel().getColumn(2); // Supondo que CPF seja a terceira coluna (index 2)
+        TableColumn colunaTelefone = userTable.getColumnModel().getColumn(3); // Supondo que Telefone seja a quarta coluna (index 3)
+        
+        colunaCpf.setCellRenderer(cpfRenderer);
+        colunaTelefone.setCellRenderer(telefoneRenderer);
+    }
     public GerenciarPessoa() {
     
         initComponents();
@@ -58,7 +98,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         // Configuração da tabela
         model = new DefaultTableModel(new Object[]{"ID", "Nome", "CPF", "Telefone"}, 0);
         userTable.setModel(model); // Associa o modelo `model` à `userTable`
-        
+        configurarRenderizadores();
         carregarDados();
 
 
@@ -67,7 +107,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         adicionarBotoesEditar();
 
         setVisible(true);
-        configurarRenderizadorPrimeiroNome();
+        configurarRenderizadorNomeComReticenciasETooltip();
     }
 
     private void carregarDados() {
@@ -86,6 +126,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
             for (Pessoa pessoa : pessoas) {
                 int id = pessoa.getId();
                 String nome = pessoa.getNome();
+                System.out.println(nome);
                 String cpf = pessoa.getCpf();
                 String telefone = pessoa.getTelefone(); // Converte booleano para texto
 
@@ -174,7 +215,7 @@ public class GerenciarPessoa extends javax.swing.JFrame {
 
     private void abrirEdicao(int pessoaId) {
         // Aqui você pode abrir um novo JFrame ou JDialog para edição do usuário
-        JOptionPane.showMessageDialog(this, "Abrindo edição para o usuário com ID: " + pessoaId);
+        JOptionPane.showMessageDialog(this, "Abrindo edição para a pessoa com ID: " + pessoaId);
         EdicaoPessoa edicao = new EdicaoPessoa(this);
         edicao.setVisible(true);
     }
@@ -473,29 +514,48 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnHome1ActionPerformed
 
-    public void configurarRenderizadorPrimeiroNome() {
-        // Define um renderizador personalizado para exibir apenas o primeiro nome
+    public void configurarRenderizadorNomeComReticenciasETooltip() {
         DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
             @Override
             public void setValue(Object value) {
                 if (value instanceof String) {
                     String textoCompleto = (String) value;
 
-                    // Exibe apenas o primeiro nome, até o primeiro espaço em branco
-                    int posEspaco = textoCompleto.indexOf(" ");
-                    String primeiroNome = (posEspaco != -1) ? textoCompleto.substring(0, posEspaco) : textoCompleto;
+                    // Define o limite de caracteres (ajuste conforme o tamanho da coluna)
+                    int limiteCaracteres = 15; 
+                    if (textoCompleto.length() > limiteCaracteres) {
+                        textoCompleto = textoCompleto.substring(0, limiteCaracteres - 3) + "...";
+                    }
 
-                    super.setValue(primeiroNome);
+                    super.setValue(textoCompleto);
                 } else {
                     super.setValue(value);
                 }
             }
         };
 
-    // Aplica o renderizador na coluna de "Nome"
-    TableColumn colunaNome = userTable.getColumnModel().getColumn(1); // Supondo que a coluna "Nome" seja a 1
-    colunaNome.setCellRenderer(renderizador);
-}
+        // Aplica o renderizador na coluna "Nome"
+        TableColumn colunaNome = userTable.getColumnModel().getColumn(1); // Coluna de índice 1 para "Nome"
+        colunaNome.setCellRenderer(renderizador);
+
+        // Adiciona o MouseMotionListener para exibir o tooltip
+        userTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                int row = userTable.rowAtPoint(e.getPoint());
+                int col = userTable.columnAtPoint(e.getPoint());
+
+                if (col == 1) { // Coluna "Nome"
+                    Object value = userTable.getValueAt(row, col);
+                    if (value != null) {
+                        userTable.setToolTipText(value.toString()); // Mostra o nome completo como tooltip
+                    }
+                } else {
+                    userTable.setToolTipText(null); // Remove o tooltip quando fora da coluna "Nome"
+                }
+            }
+        });
+    }
  
     private void btnCadastroUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroUsersActionPerformed
             

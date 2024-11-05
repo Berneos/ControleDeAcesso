@@ -1,3 +1,4 @@
+views\GerenciarPessoa$7.class
 views\GerenciarPessoa.class
 views\GerenciarUser$2.class
 controllers\UserController.class
@@ -10,6 +11,7 @@ views\Home$2.class
 views\CadastroUser$3.class
 com\mycompany\controledeacesso\ControleDeAcesso.class
 models\Usuario.class
+views\GerenciarPessoa$6.class
 views\GerenciarUser.class
 models\Catraca.class
 views\EdicaoPessoa$2.class
@@ -40,5 +42,6 @@ views\GerenciarUser$1.class
 views\GerenciarUser$5.class
 views\GerenciarPessoa$5.class
 views\Home$1.class
+views\GerenciarPessoa$8.class
 views\Login$1.class
 views\GerenciarPessoa$EditButtonListener.class

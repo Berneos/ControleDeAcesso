@@ -13,6 +13,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import javax.swing.text.MaskFormatter;
 /**
  *
  * @author ADMIN
@@ -25,11 +26,26 @@ public class EdicaoPessoa extends javax.swing.JFrame {
     private SessionFactory sessionFactory;
     private Pessoa pessoaAtual;
     private GerenciarPessoa gerenciarPessoa;
+    // Método para configurar máscaras de CPF e Telefone
+    private void configurarMascaras() {
+        try {
+            // Máscara para CPF
+            MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
+            cpfMask.install(textFieldCpf); // Aplica a máscara ao campo CPF
+
+            // Máscara para Telefone
+            MaskFormatter telefoneMask = new MaskFormatter("(##) #####-####");
+            telefoneMask.install(textFieldTelefone); // Aplica a máscara ao campo Telefone
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public EdicaoPessoa(GerenciarPessoa gerenciarPessoa) {
     
         initComponents();
         this.gerenciarPessoa = gerenciarPessoa;
         sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+        configurarMascaras();
         carregarUsuario();
         
         
@@ -52,11 +68,11 @@ public class EdicaoPessoa extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         textFieldNome = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        textFieldCpf = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         cancelarButton = new javax.swing.JButton();
         salvarButton = new javax.swing.JButton();
-        textFieldTelefone = new javax.swing.JTextField();
+        textFieldCpf = new javax.swing.JFormattedTextField();
+        textFieldTelefone = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Home"); // NOI18N
@@ -98,11 +114,6 @@ public class EdicaoPessoa extends javax.swing.JFrame {
         jLabel6.setText("CPF:");
         painelHome.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 70, -1));
 
-        textFieldCpf.setBackground(new java.awt.Color(255, 255, 255));
-        textFieldCpf.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        textFieldCpf.setForeground(new java.awt.Color(0, 0, 0));
-        painelHome.add(textFieldCpf, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 480, -1));
-
         jLabel8.setBackground(new java.awt.Color(255, 255, 255));
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
@@ -131,10 +142,15 @@ public class EdicaoPessoa extends javax.swing.JFrame {
         });
         painelHome.add(salvarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 130, 60));
 
+        textFieldCpf.setBackground(new java.awt.Color(255, 255, 255));
+        textFieldCpf.setForeground(new java.awt.Color(0, 0, 0));
+        textFieldCpf.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        painelHome.add(textFieldCpf, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 480, 30));
+
         textFieldTelefone.setBackground(new java.awt.Color(255, 255, 255));
-        textFieldTelefone.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         textFieldTelefone.setForeground(new java.awt.Color(0, 0, 0));
-        painelHome.add(textFieldTelefone, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 480, -1));
+        textFieldTelefone.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        painelHome.add(textFieldTelefone, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 480, 30));
 
         jPanel3.add(painelHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 450));
 
@@ -296,9 +312,9 @@ public class EdicaoPessoa extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel painelHome;
     private javax.swing.JButton salvarButton;
-    private javax.swing.JTextField textFieldCpf;
+    private javax.swing.JFormattedTextField textFieldCpf;
     private javax.swing.JTextField textFieldId;
     private javax.swing.JTextField textFieldNome;
-    private javax.swing.JTextField textFieldTelefone;
+    private javax.swing.JFormattedTextField textFieldTelefone;
     // End of variables declaration//GEN-END:variables
 }
