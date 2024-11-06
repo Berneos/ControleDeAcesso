@@ -3,28 +3,41 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package views;
-import controllers.HibernateUtil;
-import controllers.UserController;
-import jakarta.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import models.Usuario;
-import views.CadastroUser;
+import models.Acesso;
 import views.Login;
+import java.time.format.DateTimeFormatter;
+import controllers.UsuarioDAO;
+import javax.swing.*;
+import javax.swing.table.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.ArrayList;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 /**
  *
  * @author ADMIN
  */
-public class Home extends javax.swing.JFrame {
+public class GerenciarAcesso extends javax.swing.JFrame {
 
     /**
      * Creates new form Home
      */
     
+    
+    private DefaultTableModel model;
+    private ArrayList<JButton> editButtons = new ArrayList<>();
+    
    
-    public Home() {
+    public GerenciarAcesso() {
     
         initComponents();
         
@@ -38,8 +51,193 @@ public class Home extends javax.swing.JFrame {
         }
         
         menuPerfil.setVisible(false);
+        setTitle("Gerenciar Acessos");
+        
+
+        setLayout(null); // Usaremos layout nulo para posicionar os botões manualmente
+
+        // Configuração da tabela
+        model = new DefaultTableModel(new Object[]{"ID", "Catraca","Pessoa", "Usuário", "Data"}, 0);
+        acessTable.setModel(model); // Associa o modelo `model` à `userTable`
+        configurarRenderizadores();
+        configurarRenderizadorNomeComReticenciasETooltip();
+        carregarDados();
+
+
+
+        // Adiciona os botões "Editar" ao lado da tabela
+        adicionarBotoesEditar();
+
+        setVisible(true);
+       
     }
 
+    private void carregarDados() {
+        // Configura o Hibernate e abre uma sessão
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+
+            // Consulta para obter todos os usuários (ajustado para retornar objetos Usuario)
+            List<Acesso> acessos = session.createQuery("FROM Acesso", Acesso.class).getResultList();
+
+            // Adiciona cada usuário como uma linha na tabela
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            for (Acesso acesso : acessos) {
+                int id = acesso.id;
+                String catraca = acesso.catraca != null ? acesso.catraca.getNome() : "N/A";
+                String pessoa = acesso.pessoa != null ? acesso.pessoa.getNome() : "N/A";
+                String usuario = acesso.usuario != null ? acesso.usuario.getNome() : "N/A";
+                String dataAcesso = acesso.dataAcesso != null ? acesso.dataAcesso.format(formatter) : "N/A";
+
+                // Adiciona a linha à tabela
+                model.addRow(new Object[]{id, catraca, pessoa, usuario, dataAcesso});
+            }
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
+    
+    public void configurarRenderizadorNomeComReticenciasETooltip() {
+        DefaultTableCellRenderer renderizador = new DefaultTableCellRenderer() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof String) {
+                    String textoCompleto = (String) value;
+
+                    // Define o limite de caracteres (ajuste conforme o tamanho da coluna)
+                    int limiteCaracteres = 15; 
+                    if (textoCompleto.length() > limiteCaracteres) {
+                        textoCompleto = textoCompleto.substring(0, limiteCaracteres - 3) + "...";
+                    }
+
+                    super.setValue(textoCompleto);
+                } else {
+                    super.setValue(value);
+                }
+            }
+        };
+
+        // Aplica o renderizador na coluna "Nome"
+        TableColumn colunaNome = acessTable.getColumnModel().getColumn(2); // Coluna de índice 2 para "Nome"
+        colunaNome.setCellRenderer(renderizador);
+
+        // Aplica o renderizador na quarta coluna (índice 3)
+        TableColumn colunaQuarta = acessTable.getColumnModel().getColumn(4); // Coluna de índice 4
+        colunaQuarta.setCellRenderer(renderizador);
+
+        // Adiciona o MouseMotionListener para exibir o tooltip
+        acessTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                int row = acessTable.rowAtPoint(e.getPoint());
+                int col = acessTable.columnAtPoint(e.getPoint());
+
+                if (col == 2 || col == 4) { // Coluna "Nome" ou coluna 4
+                    Object value = acessTable.getValueAt(row, col);
+                    if (value != null) {
+                        acessTable.setToolTipText(value.toString()); // Mostra o valor completo como tooltip
+                    }
+                } else {
+                    acessTable.setToolTipText(null); // Remove o tooltip quando fora das colunas relevantes
+                }
+            }
+        });
+    }
+
+    
+    private void adicionarBotoesEditar() {
+        
+        // Limpa os botões anteriores, caso existam
+        for (JButton button : editButtons) {
+            menuCadastroUser.remove(button); // Remove do painel correto
+        }
+        editButtons.clear();
+
+        // Tamanho do painel que contém a tabela e os botões
+        int panelWidth = menuCadastroUser.getWidth();
+        int buttonWidth = (int) (panelWidth * 0.20); // 20% da largura do painel
+        int tableWidth = panelWidth - buttonWidth - 10; // Ajusta a largura da tabela para 80%
+
+        // Configura o tamanho da tabela para ocupar 80% do painel
+        acessTable.setSize(tableWidth, acessTable.getHeight());
+        JScrollPane scrollPane = (JScrollPane) acessTable.getParent().getParent();
+        scrollPane.setBounds(10, 20, tableWidth, scrollPane.getHeight()); // Ajusta a largura do scrollPane e adiciona um padding menor à esquerda
+
+        // Posição inicial dos botões
+        int yPosition = acessTable.getY();
+
+        // Adiciona os botões "Editar" ao lado de cada linha da tabela
+        for (int i = 0; i < model.getRowCount(); i++) {
+            int userId = (int) model.getValueAt(i, 0); // ID do usuário
+            JButton editButton = new JButton("Editar");
+
+            // Define a posição e o tamanho do botão
+            int rowHeight = acessTable.getRowHeight();
+            int buttonYPosition = yPosition + (i * rowHeight) + acessTable.getTableHeader().getHeight();
+            int buttonXPosition = tableWidth + 15; // Margem reduzida entre a tabela e os botões
+
+            editButton.setBounds(buttonXPosition, buttonYPosition, buttonWidth - 5, rowHeight); // Define largura e altura do botão para coincidir com a linha da tabela
+
+            // Adiciona ação ao botão
+            editButton.addActionListener(new EditButtonListener(userId));
+            editButtons.add(editButton); // Guarda o botão na lista para referência futura
+
+            menuCadastroUser.add(editButton); // Adiciona o botão ao painel correto
+        }
+
+        // Atualiza o layout para exibir os botões corretamente
+        menuCadastroUser.revalidate();
+        menuCadastroUser.repaint();
+
+    }
+       
+    private class EditButtonListener implements ActionListener {
+        private int acessId;
+
+        public EditButtonListener(int acessId) {
+            this.acessId = acessId;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Salva o ID do usuário em um arquivo .txt
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("acessoBToEdit.txt"))) {
+                writer.write(String.valueOf(acessId));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            // Abre a janela de edição do usuário
+            abrirEdicao(acessId);
+        }
+    }
+
+    private void abrirEdicao(int acessId) {
+        // Aqui você pode abrir um novo JFrame ou JDialog para edição do usuário
+        JOptionPane.showMessageDialog(this, "Abrindo edição para o acesso com ID: " + acessId);
+        EdicaoAcesso edicao = new EdicaoAcesso(this);
+        edicao.setVisible(true);
+    }
+    public void atualizarTabela() {
+    // Limpa a tabela atual
+    model.setRowCount(0);
+    
+    // Recarrega os dados dos usuários
+    carregarDados();
+    }   
+       
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -59,17 +257,19 @@ public class Home extends javax.swing.JFrame {
         btnCadastroUsers = new javax.swing.JButton();
         btnCadastroAcessos = new javax.swing.JButton();
         btnCadastroPessoas = new javax.swing.JButton();
-        btnGerenciarPessoas = new javax.swing.JButton();
+        btnGerenciarUsuarios = new javax.swing.JButton();
         btnGerenciarAcessos = new javax.swing.JButton();
         btnGerenciarAcessos1 = new javax.swing.JButton();
         menuPerfil = new javax.swing.JPanel();
         lblUsuarioLogado = new javax.swing.JLabel();
         sair = new javax.swing.JButton();
-        painelHome = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        menuCadastroUser = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        acessTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setName("Home"); // NOI18N
+        setResizable(false);
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -153,16 +353,16 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        btnGerenciarPessoas.setBackground(new java.awt.Color(255, 51, 51));
-        btnGerenciarPessoas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnGerenciarPessoas.setForeground(new java.awt.Color(255, 255, 255));
-        btnGerenciarPessoas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
-        btnGerenciarPessoas.setText("Gerenciar Usuários");
-        btnGerenciarPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        btnGerenciarPessoas.setIconTextGap(20);
-        btnGerenciarPessoas.addActionListener(new java.awt.event.ActionListener() {
+        btnGerenciarUsuarios.setBackground(new java.awt.Color(255, 51, 51));
+        btnGerenciarUsuarios.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnGerenciarUsuarios.setForeground(new java.awt.Color(255, 255, 255));
+        btnGerenciarUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
+        btnGerenciarUsuarios.setText("Gerenciar Usuários");
+        btnGerenciarUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnGerenciarUsuarios.setIconTextGap(20);
+        btnGerenciarUsuarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGerenciarPessoasActionPerformed(evt);
+                btnGerenciarUsuariosActionPerformed(evt);
             }
         });
 
@@ -173,11 +373,6 @@ public class Home extends javax.swing.JFrame {
         btnGerenciarAcessos.setText("Gerenciar Acessos");
         btnGerenciarAcessos.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnGerenciarAcessos.setIconTextGap(20);
-        btnGerenciarAcessos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGerenciarAcessosActionPerformed(evt);
-            }
-        });
 
         btnGerenciarAcessos1.setBackground(new java.awt.Color(255, 51, 51));
         btnGerenciarAcessos1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -186,11 +381,6 @@ public class Home extends javax.swing.JFrame {
         btnGerenciarAcessos1.setText("Gerenciar Pessoas");
         btnGerenciarAcessos1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnGerenciarAcessos1.setIconTextGap(20);
-        btnGerenciarAcessos1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGerenciarAcessos1ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -206,7 +396,7 @@ public class Home extends javax.swing.JFrame {
             .addComponent(btnCadastroUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroAcessos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGerenciarUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGerenciarAcessos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGerenciarAcessos1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -229,7 +419,7 @@ public class Home extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCadastroPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnGerenciarUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGerenciarAcessos, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -280,21 +470,39 @@ public class Home extends javax.swing.JFrame {
 
         jPanel3.add(menuPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 60, -1, -1));
 
-        painelHome.setBackground(new java.awt.Color(255, 255, 255));
-        painelHome.setForeground(new java.awt.Color(0, 0, 0));
-        painelHome.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        menuCadastroUser.setBackground(new java.awt.Color(255, 255, 255));
+        menuCadastroUser.setForeground(new java.awt.Color(0, 0, 0));
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/homered.png"))); // NOI18N
-        painelHome.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 540, 320));
+        jScrollPane6.setBackground(new java.awt.Color(255, 255, 255));
+        jScrollPane6.setForeground(new java.awt.Color(0, 0, 0));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 0, 51));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("HOME");
-        painelHome.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 320, 540, 90));
+        acessTable.setBackground(new java.awt.Color(255, 255, 255));
+        acessTable.setForeground(new java.awt.Color(0, 0, 0));
+        acessTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
+            }
+        ));
+        jScrollPane6.setViewportView(acessTable);
 
-        jPanel3.add(painelHome, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 0, 540, 450));
+        javax.swing.GroupLayout menuCadastroUserLayout = new javax.swing.GroupLayout(menuCadastroUser);
+        menuCadastroUser.setLayout(menuCadastroUserLayout);
+        menuCadastroUserLayout.setHorizontalGroup(
+            menuCadastroUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        menuCadastroUserLayout.setVerticalGroup(
+            menuCadastroUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jPanel3.add(menuCadastroUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 540, 390));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -331,19 +539,75 @@ public class Home extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_btnHome1ActionPerformed
- public Home(Usuario model) {
-}
-       
+
+    private void configurarRenderizadores() {
+        DefaultTableCellRenderer dataRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public void setValue(Object value) {
+                if (value instanceof String) {
+                    super.setValue(value);
+                } else {
+                    super.setValue("N/A");
+                }
+            }
+        };
+
+        TableColumn colunaData = acessTable.getColumnModel().getColumn(4);
+        colunaData.setCellRenderer(dataRenderer);
+    }
  
     private void btnCadastroUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroUsersActionPerformed
-            CadastroUser TelaCaUser = new CadastroUser();
-            TelaCaUser.setVisible(true);
-            this.dispose();
+            
+            String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                CadastroUser TelaCaUser = new CadastroUser();
+                TelaCaUser.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+            
+            
     }//GEN-LAST:event_btnCadastroUsersActionPerformed
 
+    
+    
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
-       
+       Home home = new Home();
+       home.setVisible(true);
+       this.dispose();
     }//GEN-LAST:event_btnHomeActionPerformed
+
+    private void btnGerenciarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarUsuariosActionPerformed
+        String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarUser TelaGeUser = new GerenciarUser();
+                TelaGeUser.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+    }//GEN-LAST:event_btnGerenciarUsuariosActionPerformed
 
     private void btnCadastroPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroPessoasActionPerformed
             CadastroPessoa TelaCaPe = new CadastroPessoa();
@@ -356,23 +620,6 @@ public class Home extends javax.swing.JFrame {
             TelaCaAcesso.setVisible(true);
             this.dispose();
     }//GEN-LAST:event_btnCadastroAcessosActionPerformed
-
-    private void btnGerenciarPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarPessoasActionPerformed
-            GerenciarUser TelaGeUser = new GerenciarUser();
-            TelaGeUser.setVisible(true);
-            this.dispose();
-    }//GEN-LAST:event_btnGerenciarPessoasActionPerformed
-
-    private void btnGerenciarAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessosActionPerformed
-            GerenciarAcesso TelaGeAce = new GerenciarAcesso();
-            TelaGeAce.setVisible(true);
-            this.dispose();    }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
-
-    private void btnGerenciarAcessos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessos1ActionPerformed
-            GerenciarPessoa TelaGePe = new GerenciarPessoa();
-            TelaGePe.setVisible(true);
-            this.dispose();
-    }//GEN-LAST:event_btnGerenciarAcessos1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -387,37 +634,39 @@ public class Home extends javax.swing.JFrame {
             }
         }
     }catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-        java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        java.util.logging.Logger.getLogger(GerenciarAcesso.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-    // Criação da View e do Model
-    Home view = new Home();
-    Usuario model = new Usuario();
-
-    // Exibe a View
-    view.setVisible(true);
+   
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable acessTable;
     private javax.swing.JButton btnCadastroAcessos;
     private javax.swing.JButton btnCadastroPessoas;
     private javax.swing.JButton btnCadastroUsers;
     private javax.swing.JButton btnGerenciarAcessos;
     private javax.swing.JButton btnGerenciarAcessos1;
-    private javax.swing.JButton btnGerenciarPessoas;
+    private javax.swing.JButton btnGerenciarUsuarios;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnHome1;
     private javax.swing.JLabel catracaImg;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JLabel lblUsuarioLogado;
+    private javax.swing.JPanel menuCadastroUser;
     private javax.swing.JPanel menuPerfil;
-    private javax.swing.JPanel painelHome;
     private javax.swing.JButton sair;
     // End of variables declaration//GEN-END:variables
 }

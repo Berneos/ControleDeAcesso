@@ -19,12 +19,11 @@ public class ControleDeAcesso {
         login.setVisible(true);
          try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/controle_acesso?useSSL=false&serverTimezone=UTC", "root", "Bkdeilt17");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/controle_acesso?useSSL=false&serverTimezone=UTC", "root", "root");
             System.out.println("Conexão bem-sucedida!");
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-         
     }
 }

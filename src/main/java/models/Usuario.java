@@ -3,10 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package models;
-import controllers.HibernateUtil;
 import jakarta.persistence.*;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+
 /**
  *
  * @author BRENO

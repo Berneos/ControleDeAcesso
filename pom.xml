@@ -21,9 +21,10 @@
     </build>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>22</maven.compiler.source>
-        <maven.compiler.target>22</maven.compiler.target>
+        <maven.compiler.source>23</maven.compiler.source>
+        <maven.compiler.target>23</maven.compiler.target>
         <exec.mainClass>com.mycompany.controledeacesso.ControleDeAcesso</exec.mainClass>
+        <spring.boot.version>3.3.2</spring.boot.version>
     </properties>
     <dependencies>
         
@@ -34,6 +35,11 @@
             <artifactId>hibernate-core</artifactId>
             <version>6.6.0.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api -->
         <dependency>
@@ -41,7 +47,11 @@
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.2.0</version>
         </dependency>
-     
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.3.2</version> <!-- Insira a versão correta aqui -->
+        </dependency>    
         <!-- https://mvnrepository.com/artifact/org.hibernate.common/hibernate-commons-annotations -->
         <dependency>
             <groupId>org.hibernate.common</groupId>
