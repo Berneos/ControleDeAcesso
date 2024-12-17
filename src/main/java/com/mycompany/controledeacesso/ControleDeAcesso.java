@@ -17,6 +17,7 @@ public class ControleDeAcesso {
         System.out.println("Sistema de Controle de Acesso iniciado.");
         Login login = new Login();
         login.setVisible(true);
+
          try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/controle_acesso?useSSL=false&serverTimezone=UTC", "root", "Bkdeilt17");
@@ -25,6 +26,5 @@ public class ControleDeAcesso {
         } catch (Exception e) {
             e.printStackTrace();
         }
-         
     }
 }

@@ -57,8 +57,14 @@ public class GerenciarAcesso extends javax.swing.JFrame {
         setLayout(null); // Usaremos layout nulo para posicionar os botões manualmente
 
         // Configuração da tabela
-        model = new DefaultTableModel(new Object[]{"ID", "Catraca","Pessoa", "Usuário", "Data"}, 0);
-        acessTable.setModel(model); // Associa o modelo `model` à `userTable`
+        // Configuração do modelo da tabela
+        model = new DefaultTableModel(new Object[]{"ID", "Catraca", "Pessoa", "Usuário", "Data"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Impede a edição direta de qualquer célula
+            }
+        };
+        acessTable.setModel(model); // Associa o modelo model à acessTable
         configurarRenderizadores();
         configurarRenderizadorNomeComReticenciasETooltip();
         carregarDados();
@@ -82,7 +88,9 @@ public class GerenciarAcesso extends javax.swing.JFrame {
             transaction = session.beginTransaction();
 
             // Consulta para obter todos os usuários (ajustado para retornar objetos Usuario)
-            List<Acesso> acessos = session.createQuery("FROM Acesso", Acesso.class).getResultList();
+           List<Acesso> acessos = session.createQuery(
+                "SELECT a FROM Acesso a JOIN FETCH a.pessoa JOIN FETCH a.catraca JOIN FETCH a.usuario", Acesso.class
+            ).getResultList();
 
             // Adiciona cada usuário como uma linha na tabela
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -95,6 +103,8 @@ public class GerenciarAcesso extends javax.swing.JFrame {
 
                 // Adiciona a linha à tabela
                 model.addRow(new Object[]{id, catraca, pessoa, usuario, dataAcesso});
+                System.out.println("Pessoa: " + acesso.pessoa);
+                System.out.println("Nome da Pessoa: " + (acesso.pessoa != null ? acesso.pessoa.getNome() : "null"));
             }
 
             transaction.commit();
@@ -342,6 +352,11 @@ public class GerenciarAcesso extends javax.swing.JFrame {
         btnCadastroPessoas.setText("Cadastro de Pessoas");
         btnCadastroPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnCadastroPessoas.setIconTextGap(20);
+        btnCadastroPessoas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastroPessoasActionPerformed(evt);
+            }
+        });
 
         btnGerenciarUsuarios.setBackground(new java.awt.Color(255, 51, 51));
         btnGerenciarUsuarios.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -371,6 +386,11 @@ public class GerenciarAcesso extends javax.swing.JFrame {
         btnGerenciarAcessos1.setText("Gerenciar Pessoas");
         btnGerenciarAcessos1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnGerenciarAcessos1.setIconTextGap(20);
+        btnGerenciarAcessos1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerenciarAcessos1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -461,13 +481,9 @@ public class GerenciarAcesso extends javax.swing.JFrame {
         jPanel3.add(menuPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 60, -1, -1));
 
         menuCadastroUser.setBackground(new java.awt.Color(255, 255, 255));
-        menuCadastroUser.setForeground(new java.awt.Color(0, 0, 0));
 
         jScrollPane6.setBackground(new java.awt.Color(255, 255, 255));
-        jScrollPane6.setForeground(new java.awt.Color(0, 0, 0));
 
-        acessTable.setBackground(new java.awt.Color(255, 255, 255));
-        acessTable.setForeground(new java.awt.Color(0, 0, 0));
         acessTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -479,6 +495,7 @@ public class GerenciarAcesso extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
+        acessTable.setFocusable(false);
         jScrollPane6.setViewportView(acessTable);
 
         javax.swing.GroupLayout menuCadastroUserLayout = new javax.swing.GroupLayout(menuCadastroUser);
@@ -598,6 +615,33 @@ public class GerenciarAcesso extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
             }
     }//GEN-LAST:event_btnGerenciarUsuariosActionPerformed
+
+    private void btnGerenciarAcessos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessos1ActionPerformed
+        String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarPessoa Telape = new GerenciarPessoa();
+                Telape.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+    }//GEN-LAST:event_btnGerenciarAcessos1ActionPerformed
+
+    private void btnCadastroPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroPessoasActionPerformed
+        CadastroPessoa TelaCaPe = new CadastroPessoa();
+                TelaCaPe.setVisible(true);
+                this.dispose();
+    }//GEN-LAST:event_btnCadastroPessoasActionPerformed
 
     /**
      * @param args the command line arguments

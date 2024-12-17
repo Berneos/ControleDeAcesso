@@ -39,6 +39,27 @@ public class UsuarioDAO {
         }
         return usuario;
     }
+    public Usuario buscarUsuarioPorNome(String nome) {
+            Usuario usuario = null;
+            Session session = HibernateUtil.getSessionFactory().openSession();
+
+            try {
+                String hql = "FROM Usuario u WHERE u.nome = :nome";
+                Query<Usuario> query = session.createQuery(hql, Usuario.class);
+                query.setParameter("nome", nome);
+
+                List<Usuario> results = query.getResultList();
+                if (!results.isEmpty()) {
+                    usuario = results.get(0); // Retorna o primeiro resultado
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                session.close();
+            }
+
+            return usuario;
+        }
     public boolean isAdmin(String nomeUsuario) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Consulta o usuário no banco

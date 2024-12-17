@@ -133,6 +133,11 @@ public class Home extends javax.swing.JFrame {
         btnCadastroAcessos.setText("Cadastro de Acessos");
         btnCadastroAcessos.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnCadastroAcessos.setIconTextGap(20);
+        btnCadastroAcessos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastroAcessosActionPerformed(evt);
+            }
+        });
 
         btnCadastroPessoas.setBackground(new java.awt.Color(255, 51, 51));
         btnCadastroPessoas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -141,6 +146,11 @@ public class Home extends javax.swing.JFrame {
         btnCadastroPessoas.setText("Cadastro de Pessoas");
         btnCadastroPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnCadastroPessoas.setIconTextGap(20);
+        btnCadastroPessoas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastroPessoasActionPerformed(evt);
+            }
+        });
 
         btnGerenciarUsers.setBackground(new java.awt.Color(255, 51, 51));
         btnGerenciarUsers.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -270,7 +280,6 @@ public class Home extends javax.swing.JFrame {
         jPanel3.add(menuPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 60, -1, -1));
 
         painelHome.setBackground(new java.awt.Color(255, 255, 255));
-        painelHome.setForeground(new java.awt.Color(0, 0, 0));
         painelHome.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -416,6 +425,18 @@ public class Home extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
             }
     }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
+
+    private void btnCadastroAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroAcessosActionPerformed
+                CadastroAcesso TelaCaAce = new CadastroAcesso();
+                TelaCaAce.setVisible(true);
+                this.dispose();
+    }//GEN-LAST:event_btnCadastroAcessosActionPerformed
+
+    private void btnCadastroPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroPessoasActionPerformed
+                CadastroPessoa TelaCaPe = new CadastroPessoa();
+                TelaCaPe.setVisible(true);
+                this.dispose();
+    }//GEN-LAST:event_btnCadastroPessoasActionPerformed
 
     /**
      * @param args the command line arguments

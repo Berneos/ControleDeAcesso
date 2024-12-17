@@ -22,6 +22,10 @@ CREATE TABLE tbacesso (
 	FOREIGN KEY (IdPessoa) REFERENCES tbpessoa(Id),
 	FOREIGN KEY (IdUsuario) REFERENCES tbusuario(Id)	
 );
+SELECT * FROM tbacesso;
+INSERT INTO tbacesso(IdCatraca,IdPessoa,IdUsuario,dataAcesso) VALUES (1,1,1,'2024-11-04 21:50:17');
+DELETE FROM tbacesso WHERE Id = 4;
+DROP TABLE tbacesso;
 
 /* Tabela Catraca */
 /*
@@ -52,10 +56,18 @@ public string PessoaTelefone { get; set; }
 
 CREATE TABLE tbpessoa (
 Id INT AUTO_INCREMENT PRIMARY KEY,
-PessoaName VARCHAR(255) NOT NULL,
+PessoaNome VARCHAR(255) NOT NULL,
 PessoaCPF VARCHAR (11) NOT NULL,
 PessoaTelefone VARCHAR (11) NOT NULL
 );
+
+DROP TABLE tbacesso;
+DROP TABLE tbpessoa;
+
+INSERT INTO tbpessoa(PessoaNome,PessoaCPF,PessoaTelefone) VALUES ("Hanna","12345678900","31967523644");
+DELETE FROM tbpessoa WHERE (Id = 1);
+UPDATE tbpessoa SET PessoaNome = 'Hanna' WHERE ID = 1;
+SELECT * FROM tbpessoa;
 
 /*
  public static int Id { get; set; }
@@ -74,8 +86,9 @@ isAdmin BOOLEAN NOT NULL
 
 INSERT INTO tbusuario(Nome,Usuariio,Senha,isAdmin) VALUES ("BnGames","Breno","123",true);
 INSERT INTO tbusuario(Nome,Usuariio,Senha,isAdmin) VALUES ("Igor","Moneyballs","123",false);
-
+INSERT INTO tbusuario(Nome,Usuariio,Senha,isAdmin) VALUES ("Skibidi toilet fanum tax","Dinheirobolas","123",true);
 SELECT * FROM tbusuario;
+
 
 
 

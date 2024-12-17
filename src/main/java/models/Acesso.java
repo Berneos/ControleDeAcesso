@@ -4,7 +4,7 @@
  */
 package models;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.*;
 /**
  *
  * @author BRENO
@@ -71,6 +71,4 @@ public class Acesso {
     public void setDataAcesso(LocalDateTime dataAcesso) {
         this.dataAcesso = dataAcesso;
     }
-
-    // Getters e Setters
 }
