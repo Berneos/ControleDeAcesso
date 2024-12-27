@@ -3,16 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package views;
-import controllers.HibernateUtil;
-import controllers.UserController;
-import jakarta.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
 import models.Usuario;
-import views.CadastroUser;
 import views.Login;
+import controllers.UsuarioDAO;
+import javax.swing.JOptionPane;
 /**
  *
  * @author ADMIN
@@ -59,9 +56,9 @@ public class Home extends javax.swing.JFrame {
         btnCadastroUsers = new javax.swing.JButton();
         btnCadastroAcessos = new javax.swing.JButton();
         btnCadastroPessoas = new javax.swing.JButton();
-        btnGerenciarPessoas = new javax.swing.JButton();
+        btnGerenciarUsers = new javax.swing.JButton();
         btnGerenciarAcessos = new javax.swing.JButton();
-        btnGerenciarAcessos1 = new javax.swing.JButton();
+        btnGerenciarPessoas = new javax.swing.JButton();
         menuPerfil = new javax.swing.JPanel();
         lblUsuarioLogado = new javax.swing.JLabel();
         sair = new javax.swing.JButton();
@@ -70,6 +67,8 @@ public class Home extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setName("Home"); // NOI18N
+        setResizable(false);
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -153,16 +152,16 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        btnGerenciarPessoas.setBackground(new java.awt.Color(255, 51, 51));
-        btnGerenciarPessoas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnGerenciarPessoas.setForeground(new java.awt.Color(255, 255, 255));
-        btnGerenciarPessoas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
-        btnGerenciarPessoas.setText("Gerenciar Usuários");
-        btnGerenciarPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        btnGerenciarPessoas.setIconTextGap(20);
-        btnGerenciarPessoas.addActionListener(new java.awt.event.ActionListener() {
+        btnGerenciarUsers.setBackground(new java.awt.Color(255, 51, 51));
+        btnGerenciarUsers.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnGerenciarUsers.setForeground(new java.awt.Color(255, 255, 255));
+        btnGerenciarUsers.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user.png"))); // NOI18N
+        btnGerenciarUsers.setText("Gerenciar Usuários");
+        btnGerenciarUsers.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnGerenciarUsers.setIconTextGap(20);
+        btnGerenciarUsers.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGerenciarPessoasActionPerformed(evt);
+                btnGerenciarUsersActionPerformed(evt);
             }
         });
 
@@ -179,16 +178,16 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        btnGerenciarAcessos1.setBackground(new java.awt.Color(255, 51, 51));
-        btnGerenciarAcessos1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnGerenciarAcessos1.setForeground(new java.awt.Color(255, 255, 255));
-        btnGerenciarAcessos1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pessoa.png"))); // NOI18N
-        btnGerenciarAcessos1.setText("Gerenciar Pessoas");
-        btnGerenciarAcessos1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
-        btnGerenciarAcessos1.setIconTextGap(20);
-        btnGerenciarAcessos1.addActionListener(new java.awt.event.ActionListener() {
+        btnGerenciarPessoas.setBackground(new java.awt.Color(255, 51, 51));
+        btnGerenciarPessoas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnGerenciarPessoas.setForeground(new java.awt.Color(255, 255, 255));
+        btnGerenciarPessoas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pessoa.png"))); // NOI18N
+        btnGerenciarPessoas.setText("Gerenciar Pessoas");
+        btnGerenciarPessoas.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
+        btnGerenciarPessoas.setIconTextGap(20);
+        btnGerenciarPessoas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGerenciarAcessos1ActionPerformed(evt);
+                btnGerenciarPessoasActionPerformed(evt);
             }
         });
 
@@ -206,9 +205,9 @@ public class Home extends javax.swing.JFrame {
             .addComponent(btnCadastroUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroAcessos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCadastroPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGerenciarUsers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGerenciarAcessos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGerenciarAcessos1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,11 +228,11 @@ public class Home extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCadastroPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnGerenciarUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGerenciarAcessos, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnGerenciarAcessos1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnGerenciarPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -281,7 +280,6 @@ public class Home extends javax.swing.JFrame {
         jPanel3.add(menuPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 60, -1, -1));
 
         painelHome.setBackground(new java.awt.Color(255, 255, 255));
-        painelHome.setForeground(new java.awt.Color(0, 0, 0));
         painelHome.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -336,43 +334,109 @@ public class Home extends javax.swing.JFrame {
        
  
     private void btnCadastroUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroUsersActionPerformed
-            CadastroUser TelaCaUser = new CadastroUser();
-            TelaCaUser.setVisible(true);
-            this.dispose();
+            
+            String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                CadastroUser TelaCaUser = new CadastroUser();
+                TelaCaUser.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+            
+            
     }//GEN-LAST:event_btnCadastroUsersActionPerformed
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
        
     }//GEN-LAST:event_btnHomeActionPerformed
 
-    private void btnCadastroPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroPessoasActionPerformed
-            CadastroPessoa TelaCaPe = new CadastroPessoa();
-            TelaCaPe.setVisible(true);
-            this.dispose();
-    }//GEN-LAST:event_btnCadastroPessoasActionPerformed
+    private void btnGerenciarUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarUsersActionPerformed
+        
+            String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-    private void btnCadastroAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroAcessosActionPerformed
-            CadastroAcesso TelaCaAcesso = new CadastroAcesso();
-            TelaCaAcesso.setVisible(true);
-            this.dispose();
-    }//GEN-LAST:event_btnCadastroAcessosActionPerformed
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarUser TelaGeUser = new GerenciarUser();
+                TelaGeUser.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+        
+    }//GEN-LAST:event_btnGerenciarUsersActionPerformed
 
     private void btnGerenciarPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarPessoasActionPerformed
-            GerenciarUser TelaGeUser = new GerenciarUser();
-            TelaGeUser.setVisible(true);
-            this.dispose();
+        String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarPessoa Telape = new GerenciarPessoa();
+                Telape.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
     }//GEN-LAST:event_btnGerenciarPessoasActionPerformed
 
     private void btnGerenciarAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessosActionPerformed
-            GerenciarAcesso TelaGeAce = new GerenciarAcesso();
-            TelaGeAce.setVisible(true);
-            this.dispose();    }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
+        String nomeUsuario = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+                nomeUsuario = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-    private void btnGerenciarAcessos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessos1ActionPerformed
-            GerenciarPessoa TelaGePe = new GerenciarPessoa();
-            TelaGePe.setVisible(true);
-            this.dispose();
-    }//GEN-LAST:event_btnGerenciarAcessos1ActionPerformed
+            UsuarioDAO usuarioDAO = new UsuarioDAO();
+            boolean isAdmin = usuarioDAO.isAdmin(nomeUsuario);
+
+            if (isAdmin) {
+                GerenciarAcesso geace = new GerenciarAcesso();
+                geace.setVisible(true);
+                this.dispose();
+            } else {
+                // Exibe alerta de área restrita
+                JOptionPane.showMessageDialog(this, "Acesso restrito para administradores.");
+            }
+    }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
+
+    private void btnCadastroAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroAcessosActionPerformed
+                CadastroAcesso TelaCaAce = new CadastroAcesso();
+                TelaCaAce.setVisible(true);
+                this.dispose();
+    }//GEN-LAST:event_btnCadastroAcessosActionPerformed
+
+    private void btnCadastroPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroPessoasActionPerformed
+                CadastroPessoa TelaCaPe = new CadastroPessoa();
+                TelaCaPe.setVisible(true);
+                this.dispose();
+    }//GEN-LAST:event_btnCadastroPessoasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -404,8 +468,8 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JButton btnCadastroPessoas;
     private javax.swing.JButton btnCadastroUsers;
     private javax.swing.JButton btnGerenciarAcessos;
-    private javax.swing.JButton btnGerenciarAcessos1;
     private javax.swing.JButton btnGerenciarPessoas;
+    private javax.swing.JButton btnGerenciarUsers;
     private javax.swing.JButton btnHome;
     private javax.swing.JButton btnHome1;
     private javax.swing.JLabel catracaImg;

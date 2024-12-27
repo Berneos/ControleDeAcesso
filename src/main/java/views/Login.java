@@ -42,6 +42,8 @@ public class Login extends javax.swing.JFrame {
         msgLogin = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setName("Login"); // NOI18N
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 0, 51));
 

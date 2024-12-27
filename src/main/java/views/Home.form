@@ -3,6 +3,8 @@
 <Form version="1.9" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="name" type="java.lang.String" value="Home" noResource="true"/>
+    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -115,9 +117,9 @@
                   <Component id="btnCadastroUsers" alignment="0" max="32767" attributes="0"/>
                   <Component id="btnCadastroAcessos" alignment="0" max="32767" attributes="0"/>
                   <Component id="btnCadastroPessoas" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btnGerenciarPessoas" alignment="0" max="32767" attributes="0"/>
+                  <Component id="btnGerenciarUsers" alignment="0" max="32767" attributes="0"/>
                   <Component id="btnGerenciarAcessos" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btnGerenciarAcessos1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="btnGerenciarPessoas" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -142,11 +144,11 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnCadastroPessoas" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnGerenciarPessoas" min="-2" pref="49" max="-2" attributes="0"/>
+                      <Component id="btnGerenciarUsers" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnGerenciarAcessos" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnGerenciarAcessos1" min="-2" pref="49" max="-2" attributes="0"/>
+                      <Component id="btnGerenciarPessoas" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -259,7 +261,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCadastroPessoasActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="btnGerenciarPessoas">
+            <Component class="javax.swing.JButton" name="btnGerenciarUsers">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="33" red="ff" type="rgb"/>
@@ -278,7 +280,7 @@
                 <Property name="iconTextGap" type="int" value="20"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerenciarPessoasActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerenciarUsersActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnGerenciarAcessos">
@@ -303,7 +305,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerenciarAcessosActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="btnGerenciarAcessos1">
+            <Component class="javax.swing.JButton" name="btnGerenciarPessoas">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="33" red="ff" type="rgb"/>
@@ -322,7 +324,7 @@
                 <Property name="iconTextGap" type="int" value="20"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerenciarAcessos1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerenciarPessoasActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -404,9 +406,6 @@
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
           </Properties>
           <Constraints>

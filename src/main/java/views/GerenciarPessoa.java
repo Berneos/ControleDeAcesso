@@ -96,7 +96,14 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         setLayout(null); // Usaremos layout nulo para posicionar os botões manualmente
 
         // Configuração da tabela
-        model = new DefaultTableModel(new Object[]{"ID", "Nome", "CPF", "Telefone"}, 0);
+        model = new DefaultTableModel(new Object[]{"ID", "Nome", "CPF", "Telefone"}, 0) {
+        
+        @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Impede a edição direta de qualquer célula
+            }
+        
+        };
         userTable.setModel(model); // Associa o modelo `model` à `userTable`
         configurarRenderizadores();
         carregarDados();
@@ -375,6 +382,11 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         btnGerenciarAcessos1.setText("Gerenciar Pessoas");
         btnGerenciarAcessos1.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         btnGerenciarAcessos1.setIconTextGap(20);
+        btnGerenciarAcessos1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerenciarAcessos1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -465,13 +477,9 @@ public class GerenciarPessoa extends javax.swing.JFrame {
         jPanel3.add(menuPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 60, -1, -1));
 
         menuCadastroUser.setBackground(new java.awt.Color(255, 255, 255));
-        menuCadastroUser.setForeground(new java.awt.Color(0, 0, 0));
 
         jScrollPane6.setBackground(new java.awt.Color(255, 255, 255));
-        jScrollPane6.setForeground(new java.awt.Color(0, 0, 0));
 
-        userTable.setBackground(new java.awt.Color(255, 255, 255));
-        userTable.setForeground(new java.awt.Color(0, 0, 0));
         userTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -651,17 +659,21 @@ public class GerenciarPessoa extends javax.swing.JFrame {
             }
     }//GEN-LAST:event_btnGerenciarAcessosActionPerformed
 
-    private void btnCadastroPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroPessoasActionPerformed
-            CadastroPessoa TelaCaPe = new CadastroPessoa();
-            TelaCaPe.setVisible(true);
-            this.dispose();
-    }//GEN-LAST:event_btnCadastroPessoasActionPerformed
+    private void btnGerenciarAcessos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarAcessos1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGerenciarAcessos1ActionPerformed
 
     private void btnCadastroAcessosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroAcessosActionPerformed
-            CadastroAcesso TelaCaAcesso = new CadastroAcesso();
-            TelaCaAcesso.setVisible(true);
-            this.dispose();
+        CadastroAcesso TelaCaAce = new CadastroAcesso();
+        TelaCaAce.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnCadastroAcessosActionPerformed
+
+    private void btnCadastroPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroPessoasActionPerformed
+        CadastroPessoa TelaCaPe = new CadastroPessoa();
+        TelaCaPe.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCadastroPessoasActionPerformed
 
     /**
      * @param args the command line arguments

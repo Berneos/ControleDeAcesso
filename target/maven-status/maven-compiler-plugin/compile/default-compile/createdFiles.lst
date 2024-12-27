@@ -1,5 +1,6 @@
 views\GerenciarPessoa$7.class
 views\CadastroPessoa$5.class
+views\GerenciarUser$12.class
 views\GerenciarUser$9.class
 controllers\UserController.class
 views\GerenciarPessoa$4.class
@@ -19,6 +20,7 @@ views\GerenciarAcesso$2.class
 views\Home.class
 views\GerenciarUser$3.class
 views\EdicaoAcesso$1.class
+repository\CatracaDAO.class
 views\GerenciarUser$7.class
 views\CadastroPessoa$3.class
 views\GerenciarAcesso$1.class
@@ -56,6 +58,7 @@ views\CadastroUser.class
 views\CadastroAcesso$4.class
 views\Home$2.class
 views\CadastroUser$3.class
+views\GerenciarAcesso$12.class
 views\CadastroPessoa$4.class
 com\mycompany\controledeacesso\ControleDeAcesso.class
 models\Usuario.class
@@ -64,6 +67,7 @@ views\GerenciarUser.class
 views\GerenciarAcesso$9.class
 views\GerenciarUser$11.class
 models\Catraca.class
+views\GerenciarPessoa$14.class
 views\EdicaoPessoa$2.class
 views\CadastroPessoa$1.class
 views\GerenciarPessoa$3.class
@@ -72,6 +76,8 @@ models\Pessoa.class
 views\CadastroUser$1.class
 views\Login$2.class
 views\EdicaoPessoa.class
+views\GerenciarAcesso$11.class
+views\GerenciarPessoa$13.class
 views\CadastroPessoa$7.class
 views\GerenciarUser$10.class
 repository\AcessoDAO.class
@@ -80,6 +86,7 @@ views\Home$7.class
 views\CadastroPessoa.class
 controllers\PessoaController.class
 views\CadastroUser$2.class
+views\GerenciarPessoa$12.class
 views\GerenciarAcesso$10.class
 views\EdicaoPessoa$1.class
 views\GerenciarUser$5.class

@@ -14,27 +14,16 @@ public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
-    private Integer id;
+    public Integer id;
 
-    @Column(name = "PessoaName")
-    private String nome;
+    @Column(name = "PessoaNome")
+    public String nome;
 
     @Column(name = "PessoaCPF")
-    private String cpf;
-
+    public String cpf;
+    
     @Column(name = "PessoaTelefone")
-    private String telefone;
-
-    // Construtor padrão
-    public Pessoa() {}
-
-    // Construtor com parâmetros
-    public Pessoa(int id, String nome, String cpf, String telefone) {
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
-    }
+    public String telefone;
 
     // Getters e Setters
     public Integer getId() { return id; }
@@ -45,4 +34,5 @@ public class Pessoa {
     public void setCpf(String cpf) { this.cpf = cpf; }
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
+    
 }
