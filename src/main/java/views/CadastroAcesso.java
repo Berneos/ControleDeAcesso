@@ -10,9 +10,19 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 import models.Acesso;
+import models.Catraca;
 import repository.AcessoDAO;
+import repository.CatracaDAO;
+import controllers.UsuarioDAO;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import repository.PessoaDAO;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import javax.swing.text.MaskFormatter;
+import models.Pessoa;
+import models.Usuario;
 
 
 /**
@@ -21,14 +31,27 @@ import java.time.*;
  */
 public class CadastroAcesso extends javax.swing.JFrame {
     private PessoaDAO pessoaDAO;
-        private AcessoDAO acessoDAO;
-
+    private AcessoDAO acessoDAO;
+    private CatracaDAO catracaDAO;
+    private UsuarioDAO usuarioDAO;
+    String nomeUsuario = null;
+   
     public CadastroAcesso() {
         this.pessoaDAO = new PessoaDAO(); 
         this.acessoDAO = new AcessoDAO(); 
+        this.catracaDAO = new CatracaDAO();
+        this.usuarioDAO = new UsuarioDAO();
+        
         initComponents();
         preencherComboBoxPessoas(); 
         definirDataAtual();
+        preencherComboBoxCatracas();
+        try (BufferedReader reader = new BufferedReader(new FileReader("usuarioLogado.txt"))) {
+            nomeUsuario = reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
     }
     
     private void definirDataAtual() {
@@ -38,7 +61,7 @@ public class CadastroAcesso extends javax.swing.JFrame {
     DateTxt.setText(dataFormatada);
     }
     
-     private void preencherComboBoxPessoas() {
+    private void preencherComboBoxPessoas() {
         PessoaDAO pessoaDAO = new PessoaDAO();
         List<String> nomesPessoas = pessoaDAO.buscarTodosNomes(); // Busca os nomes
 
@@ -48,6 +71,17 @@ public class CadastroAcesso extends javax.swing.JFrame {
         }
 
         PessoaCB.setModel(model); // Define o modelo no JComboBox
+    }
+    private void preencherComboBoxCatracas() {
+        CatracaDAO catracaDAO = new CatracaDAO();
+        List<String> nomesCatraca = catracaDAO.buscarTodosNomes(); // Busca os nomes
+
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        for (String nome : nomesCatraca) {
+            model.addElement(nome); // Adiciona os nomes ao modelo
+        }
+
+        CatracaCB.setModel(model); // Define o modelo no JComboBox
     }
 
     /**
@@ -63,13 +97,16 @@ public class CadastroAcesso extends javax.swing.JFrame {
         PessoaCB = new javax.swing.JComboBox<>();
         PessoaLabel = new javax.swing.JLabel();
         DateLabel = new javax.swing.JLabel();
-        DateTxt = new javax.swing.JTextField();
         Inputtbutton = new javax.swing.JButton();
+        DateTxt = new javax.swing.JFormattedTextField();
+        PessoaLabel1 = new javax.swing.JLabel();
+        CatracaCB = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         HomeButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -89,21 +126,28 @@ public class CadastroAcesso extends javax.swing.JFrame {
         DateLabel.setForeground(new java.awt.Color(0, 0, 0));
         DateLabel.setText("Data e hora:");
 
-        DateTxt.setEditable(false);
-        DateTxt.setBackground(new java.awt.Color(255, 0, 51));
-        DateTxt.setForeground(new java.awt.Color(255, 255, 255));
-        DateTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DateTxtActionPerformed(evt);
-            }
-        });
-
         Inputtbutton.setBackground(new java.awt.Color(255, 0, 51));
         Inputtbutton.setForeground(new java.awt.Color(255, 255, 255));
         Inputtbutton.setText("Cadastrar");
         Inputtbutton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 InputtbuttonActionPerformed(evt);
+            }
+        });
+
+        DateTxt.setBackground(new java.awt.Color(255, 0, 51));
+        DateTxt.setForeground(new java.awt.Color(255, 255, 255));
+        DateTxt.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+
+        PessoaLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        PessoaLabel1.setText("Catraca:");
+
+        CatracaCB.setBackground(new java.awt.Color(255, 0, 51));
+        CatracaCB.setForeground(new java.awt.Color(255, 255, 255));
+        CatracaCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        CatracaCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CatracaCBActionPerformed(evt);
             }
         });
 
@@ -114,14 +158,26 @@ public class CadastroAcesso extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PessoaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PessoaCB, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(121, 121, 121)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(DateLabel)
-                    .addComponent(DateTxt)
-                    .addComponent(Inputtbutton, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                .addContainerGap(116, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(PessoaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(PessoaCB, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(121, 121, 121)
+                                .addComponent(Inputtbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(116, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(DateLabel)
+                                    .addComponent(DateTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(35, 35, 35))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CatracaCB, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(PessoaLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -134,7 +190,11 @@ public class CadastroAcesso extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(PessoaCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(DateTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 151, Short.MAX_VALUE)
+                .addGap(49, 49, 49)
+                .addComponent(PessoaLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CatracaCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                 .addComponent(Inputtbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(83, 83, 83))
         );
@@ -207,36 +267,54 @@ public class CadastroAcesso extends javax.swing.JFrame {
     }//GEN-LAST:event_PessoaCBActionPerformed
 
     private void InputtbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InputtbuttonActionPerformed
-    // Captura o nome selecionado no JComboBox
-    String nomeSelecionado = (String) PessoaCB.getSelectedItem();
-    
-    // Busca o ID da pessoa correspondente ao nome selecionado
-    Integer idPessoa = pessoaDAO.buscarIdPorNome(nomeSelecionado); // Chama o método que você implementou
-    
-    String dataAcessoStr = DateTxt.getText(); // Certifique-se de que a data esteja no formato adequado
-    Date dataAcesso;
-    try {
-        dataAcesso = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dataAcessoStr); // Formato de data
+        // Captura o nome selecionado no JComboBox
+        String nomeSelecionado = (String) PessoaCB.getSelectedItem();
+        String catracaSelecionada = (String) CatracaCB.getSelectedItem();
 
-        // Cria um novo objeto Acesso
-        Acesso acesso = new Acesso();
-        acesso.setId(idPessoa);
+        // Busca o objeto Pessoa completo no banco pelo nome
+        Pessoa pessoa = pessoaDAO.buscarPessoaPorNome(nomeSelecionado);
+        Catraca catraca = catracaDAO.buscarCatracaPorNome(catracaSelecionada);
+        Usuario usuario = usuarioDAO.buscarUsuarioPorNome(nomeUsuario);
 
-         // Salva o acesso no banco de dados
-        if (acessoDAO.salvarAcesso(acesso)) {
-            JOptionPane.showMessageDialog(this, "Acesso cadastrado com sucesso!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Erro ao cadastrar acesso.");
+        if (pessoa == null) {
+            JOptionPane.showMessageDialog(this, "Pessoa não encontrada no banco de dados.");
+            return;
         }
-    } catch (ParseException e) {
-        JOptionPane.showMessageDialog(this, "Data inválida. Por favor, use o formato dd/MM/yyyy HH:mm:ss.");
-        e.printStackTrace();
-    }
+        if (catraca == null) {
+            JOptionPane.showMessageDialog(this, "Catraca não encontrada no banco de dados.");
+            return;
+        }
+
+        String dataAcessoStr = DateTxt.getText(); // Obtém a data como string
+        LocalDateTime dataAcesso;
+
+        try {
+            // Parseia a data para LocalDateTime
+            dataAcesso = LocalDateTime.parse(dataAcessoStr, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+            // Cria um novo objeto Acesso
+            Acesso acesso = new Acesso();
+            acesso.setPessoa(pessoa); // Relaciona o acesso com a pessoa
+            acesso.setDataAcesso(dataAcesso); // Define a data e hora do acesso
+            acesso.setCatraca(catraca);
+            acesso.setUsuario(usuario);
+            
+
+            // Salva o acesso no banco de dados
+            if (acessoDAO.salvarAcesso(acesso)) {
+                JOptionPane.showMessageDialog(this, "Acesso cadastrado com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar acesso.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Data inválida. Use o formato dd/MM/yyyy HH:mm:ss.");
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_InputtbuttonActionPerformed
 
-    private void DateTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DateTxtActionPerformed
+    private void CatracaCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CatracaCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_DateTxtActionPerformed
+    }//GEN-LAST:event_CatracaCBActionPerformed
 
     /**
      * @param args the command line arguments
@@ -251,15 +329,18 @@ public class CadastroAcesso extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+      
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> CatracaCB;
     private javax.swing.JLabel DateLabel;
-    private javax.swing.JTextField DateTxt;
+    private javax.swing.JFormattedTextField DateTxt;
     private javax.swing.JButton HomeButton;
     private javax.swing.JButton Inputtbutton;
     private javax.swing.JComboBox<String> PessoaCB;
     private javax.swing.JLabel PessoaLabel;
+    private javax.swing.JLabel PessoaLabel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

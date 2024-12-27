@@ -103,6 +103,7 @@ public class CadastroPessoa extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(500, 380));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 0, 51));
         jPanel1.setMinimumSize(new java.awt.Dimension(495, 60));
@@ -129,15 +130,12 @@ public class CadastroPessoa extends javax.swing.JFrame {
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        NomeLabel.setForeground(new java.awt.Color(0, 0, 0));
         NomeLabel.setText("Nome:");
         jPanel2.add(NomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
 
-        CpfLabel.setForeground(new java.awt.Color(0, 0, 0));
         CpfLabel.setText("CPF:");
         jPanel2.add(CpfLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
-        telLabel.setForeground(new java.awt.Color(0, 0, 0));
         telLabel.setText("Telefone:");
         jPanel2.add(telLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
 
@@ -217,7 +215,7 @@ public class CadastroPessoa extends javax.swing.JFrame {
 
     // Conexão com o banco de dados
     try {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/controle_acesso", "root", "root");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/controle_acesso", "root", "Bkdeilt17");
 
         // Criação das instâncias DAO e Controller
         PessoaDAO pessoaDAO = new PessoaDAO();
